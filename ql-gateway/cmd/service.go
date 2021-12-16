@@ -9,6 +9,8 @@
 
 package main
 
-func main() {
+import "github.com/restoflife/micro/gateway/command"
 
+func main() {
+	_ = command.RootCmd.Execute()
 }

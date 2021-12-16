@@ -1,0 +1,76 @@
+[server]
+#正式服配置端口
+addr = "0.0.0.0:1800"
+#调试模式
+mode = true
+#rpc 地址
+rpc_addr = "0.0.0.0:1700"
+#注册服务发现 etcd地址
+etcd = "http://127.0.0.1:2379"
+etcd_cert = ""#./config/etcd.pem
+etcd_key = "" #./config/etcd-key.pem
+etcd_ca_cert = "" #./config/etcd-ca.pem
+#注册服务发现 prefix服务目录
+prefix = "/services/gateway/"
+
+#系统云行日志配置
+[runLog]
+#日志文件路径
+file = "./log/run.log"
+#所有级别日志文件最大存储大小，级别单独配置将覆盖此值
+maxSize = 100
+#所有级别日志文件备份个数，级别单独配置将覆盖此值
+maxBackups = 10
+#所有级别日志文件最大存储时间，单位：天，级别单独配置将覆盖此值
+maxAge = 30
+#日志级别
+level = "error"
+
+#服务访问日志
+[accessLog]
+#访问日志文件
+file = "./log/access.log"
+#所有级别日志文件最大存储大小，级别单独配置将覆盖此值
+maxSize = 100
+#所有级别日志文件备份个数，级别单独配置将覆盖此值
+maxBackups = 10
+#所有级别日志文件最大存储时间，单位：天，级别单独配置将覆盖此值
+maxAge = 30
+
+#数据库配置
+[db.default]
+#数据库驱动
+driver = "mysql"
+dsn = "root:mysql@tcp(127.0.0.1:33066)/ql?charset=utf8mb4&parseTime=True&loc=Local"
+#空闲数大小
+max_idle = 10
+#最大打开连接数
+max_open = 30
+#是否显示SQL
+show_sql = true
+#从
+[[db.default.slave]]
+dsn = "root:mysql@tcp(127.0.0.1:33066)/ql?charset=utf8mb4&parseTime=True&loc=Local"
+
+#redis配置
+[redis]
+network = "tcp"
+# len >1 为集群模式否则为单机模式
+addr = ["127.0.0.1:6378"]
+#redis数据库编号0-15取值
+db = 5
+#密码
+password = ""
+#有值则为哨兵模式
+master_name = ""
+#连接池配额
+pool_size = 10
+#最小空闲连接配额
+idle_conns = 10
+
+#登陆相关配置
+[login]
+total = 5
+time = 600
+key = "9c585bc02b29f7718f6d15cab687ac19"
+timeout = 36000
