@@ -142,7 +142,7 @@ _xmsgs/
 
 ### Go template
 # Binaries for programs and plugins
-*.exe
+
 *.exe~
 *.dll
 *.so
@@ -159,3 +159,4 @@ _xmsgs/
 .idea
 ./ql-gateway/log/
 
+/ql-gateway/log/
