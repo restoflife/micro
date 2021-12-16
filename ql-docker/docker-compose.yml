@@ -1,0 +1,97 @@
+version: '3'
+#docker stop $(docker ps -q) & docker rm $(docker ps -aq)
+services:
+  golang:
+    build:
+      context: ./golang
+      dockerfile: Dockerfile
+    container_name: golang
+    hostname: golang
+    networks:
+      webserver:
+        ipv4_address: 172.18.238.2
+    ports:
+      - "8010:3100"
+      - "8020:3300"
+    links:
+      - redis
+      - mysql
+      - mongodb
+    volumes:
+      - "../ql-gateway:/www/ql-gateway"
+      - "../ql-protos:/www/ql-protos"
+    tty: true
+  redis:
+    image: redis:6.0.6-alpine
+    container_name: redis
+    hostname: redis
+    networks:
+      webserver:
+        ipv4_address: 172.18.238.4
+    ports:
+      - "6378:6379"
+  mongodb:
+    build:
+      context: ./mongodb
+      dockerfile: Dockerfile
+    container_name: mongodb
+    hostname: mongodb
+    logging:
+      driver: none
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: mongodb
+    ports:
+      - "27017:27017"
+    networks:
+      webserver:
+        ipv4_address: 172.18.238.5
+  mysql:
+    build:
+      context: ./mysql
+      dockerfile: Dockerfile
+    container_name: mysql
+    hostname: mysql
+    networks:
+      webserver:
+        ipv4_address: 172.18.238.6
+    ports:
+      - "33066:3306"
+    command: --default-authentication-plugin=mysql_native_password
+    #restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+    volumes:
+      - ./mysql/conf/my.cnf:/etc/mysql/conf.d/my.cnf  #如若需要容器加载并使用该配置,宿主机文件权限必须为只读,否则挂载到容器内权限为777会导致MYSQL服务自动忽略该配置文件
+      - "./mysql/data/:/var/lib/mysql/"
+      - "./mysql/mysql-files/:/var/lib/mysql-files/"
+  etcd:
+    hostname: etcd
+    image: bitnami/etcd:latest
+    container_name: etcd
+    privileged: true
+    volumes:
+      - "./etcd/data:/etc/etcd/data"
+    environment:
+      - "ETCD_ADVERTISE_CLIENT_URLS=http://0.0.0.0:2379"
+      - "ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379"
+      - "ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380"
+      - "ETCD_INITIAL_ADVERTISE_PEER_URLS=http://0.0.0.0:2380"
+      - "ALLOW_NONE_AUTHENTICATION=yes"
+      - "ETCD_INITIAL_CLUSTER=node1=http://0.0.0.0:2380"
+      - "ETCD_NAME=node1"
+      - "ETCD_DATA_DIR=/opt/bitnami/etcd/data"
+    ports:
+      - "2379:2379"
+      - "2380:2380"
+    networks:
+      webserver:
+        ipv4_address: 172.18.238.8
+
+networks:
+  webserver:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.18.238.0/24
