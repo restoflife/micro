@@ -23,9 +23,14 @@ require (
 	github.com/goccy/go-json v0.8.1 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/tidwall/gjson v1.12.1
+	go.etcd.io/etcd/client/pkg/v3 v3.5.1 // indirect
 	go.etcd.io/etcd/client/v3 v3.5.1 // indirect
 	golang.org/x/net v0.0.0-20211216030914-fe4d6282115f // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
 	xorm.io/xorm v1.2.5
+	github.com/restoflife/micro/protos v1.1.0
+)
+replace (
+	github.com/restoflife/micro/protos => ../ql-protos
 )

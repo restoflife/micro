@@ -15,11 +15,11 @@ import (
 )
 
 var RootCmd = &cobra.Command{
-	Use:   "ql",
+	Use:   "gateway",
 	Short: "operation background",
 	Long:  "no only book operation background",
 	Run: func(cmd *cobra.Command, args []string) {
-		app.Run(NewApp("ql", cmd))
+		app.Run(NewApp("gateway", cmd))
 	},
 }
 

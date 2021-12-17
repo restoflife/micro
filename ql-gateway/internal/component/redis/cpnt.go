@@ -54,7 +54,7 @@ func SetCache(key string, data interface{}, duration time.Duration) error {
 	return Cli.Set(ctx, key, jsonData, duration).Err()
 }
 
-func CheckCache(key string, fn func() (interface{}, error), duration int64, needCache bool) (interface{}, error) {
+func CheckCache(key string, fn func() (interface{}, error), duration time.Duration, needCache bool) (interface{}, error) {
 	s, err := GetCache(key)
 	if needCache && err == nil {
 		return s, nil
@@ -63,7 +63,7 @@ func CheckCache(key string, fn func() (interface{}, error), duration int64, need
 		//At the same time, only one function with the same key is executed to prevent breakdown
 		Num, ok, _ := lockG.Do(key, fn)
 		if ok == nil {
-			_ = SetCache(key, Num, time.Duration(duration)*time.Second)
+			_ = SetCache(key, Num, duration*time.Second)
 			re = Num
 		} else {
 			re = Num

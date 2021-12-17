@@ -12,6 +12,8 @@ etcd_key = "" #./config/etcd-key.pem
 etcd_ca_cert = "" #./config/etcd-ca.pem
 #注册服务发现 prefix服务目录
 prefix = "/services/gateway/"
+#订单服务发现
+order_prefix = "/services/order/"
 
 #系统云行日志配置
 [runLog]
@@ -41,7 +43,7 @@ maxAge = 30
 [db.default]
 #数据库驱动
 driver = "mysql"
-dsn = "root:mysql@tcp(127.0.0.1:33066)/ql?charset=utf8mb4&parseTime=True&loc=Local"
+dsn = "root:mysql@tcp(127.0.0.1:33066)/gateway?charset=utf8mb4&parseTime=True&loc=Local"
 #空闲数大小
 max_idle = 10
 #最大打开连接数
@@ -50,7 +52,7 @@ max_open = 30
 show_sql = true
 #从
 [[db.default.slave]]
-dsn = "root:mysql@tcp(127.0.0.1:33066)/ql?charset=utf8mb4&parseTime=True&loc=Local"
+dsn = "root:mysql@tcp(127.0.0.1:33066)/gateway?charset=utf8mb4&parseTime=True&loc=Local"
 
 #redis配置
 [redis]

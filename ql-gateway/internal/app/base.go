@@ -64,6 +64,7 @@ func (b *Base) Run() {
 		signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
 		select {
 		case sig := <-c:
+			//time.Sleep(time.Second * 5)
 			return fmt.Errorf("received signal %s", sig)
 		}
 	}

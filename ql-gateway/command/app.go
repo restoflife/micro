@@ -20,7 +20,11 @@ import (
 	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/restoflife/micro/gateway/conf"
 	"github.com/restoflife/micro/gateway/internal/app"
+	"github.com/restoflife/micro/gateway/internal/component/db"
+	"github.com/restoflife/micro/gateway/internal/component/grpccli"
 	"github.com/restoflife/micro/gateway/internal/component/log"
+	"github.com/restoflife/micro/gateway/internal/component/redis"
+	"github.com/restoflife/micro/gateway/internal/model"
 	"github.com/restoflife/micro/gateway/router"
 	"github.com/restoflife/micro/gateway/utils"
 	"github.com/spf13/cobra"
@@ -63,10 +67,23 @@ func (m *mainApp) InitConfig() {
 }
 
 func (m *mainApp) BootUpPrepare() {
+	log.Infox("initialize xorm connection to database")
+	if err := db.MustBootUp(conf.C.DB, db.SetSync2Func(model.Sync)); err != nil {
+		log.Panic(zap.Error(err))
+	}
 
+	log.Infox("initialize connection to redis")
+	if err := redis.MustBootUp(conf.C.Redis); err != nil {
+		log.Panic(zap.Error(err))
+	}
+
+	log.Infox("grpc client initialized...")
+	if err := grpccli.MustSetup(); err != nil {
+		log.Error(zap.Error(err))
+	}
 }
 func (m *mainApp) BootUpServer() {
-	httpServer()
+	go httpServer()
 	//go gRPC()
 }
 func httpServer() {
@@ -126,12 +143,12 @@ func gRPC() {
 	if err != nil {
 		log.Panic(zap.Error(err))
 	}
+
 	//Create a connection
 	client, err := etcdv3.NewClient(context.Background(), addr, option)
 	if err != nil {
 		log.Panic(zap.Error(err))
 	}
-
 	//Create a registration
 	registrar := etcdv3.NewRegistrar(client, etcdv3.Service{
 		Key:   conf.C.ServerCfg.Prefix,

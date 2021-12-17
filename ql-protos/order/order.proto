@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package order;
+option go_package = "./;order_pb"; // 指定路径
+
+service OrderSvc {
+  //订单详情
+  rpc GetOrderDetails(getOrderDetailsReq) returns (getOrderDetailsResp) {}
+}
+message getOrderDetailsReq {
+  int64 id = 1;
+}
+message getOrderDetailsResp {
+  int64 id = 1;
+  string order_id = 2;
+  int64 goods_price = 3;
+  string pay_time = 4;
+  int64 pay_price = 5;
+  repeated orderGoodsList goods = 6;
+}
+message orderGoodsList {
+  int64 id = 1;
+  string name = 2;
+}

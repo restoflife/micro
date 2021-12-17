@@ -9,7 +9,11 @@
 
 package router
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	"net/http"
+	"time"
+)
 
 var (
 	userPath = "/passport/"
@@ -22,7 +26,9 @@ func authGroup(root *gin.RouterGroup) {
 }
 
 func RegisterAuthAPIHandler(r *gin.RouterGroup) {
-	RegisterPOSTHandler(r, "/login", func(context *gin.Context) {
 
+	RegisterPOSTHandler(r, "/login", func(c *gin.Context) {
+		time.Sleep(time.Second * 3)
+		c.JSON(http.StatusOK, gin.H{"name": userPath})
 	})
 }

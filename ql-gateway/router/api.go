@@ -24,5 +24,7 @@ func ApiRouter(root *gin.Engine) {
 
 	//Authentic route
 	authGroup(api)
+	//Order route
+	orderGroup(api)
 
 }
