@@ -87,7 +87,12 @@ services:
     networks:
       webserver:
         ipv4_address: 172.18.238.8
-
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    hostname: zipkin
+    ports:
+      - "9411:9411"
 networks:
   webserver:
     driver: bridge
