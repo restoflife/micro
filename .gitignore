@@ -160,4 +160,4 @@ _xmsgs/
 ./ql-gateway/log/
 
 /ql-gateway/log/
-!/ql-docker/mysql/data/
+/ql-docker/mysql/data/
