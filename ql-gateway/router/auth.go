@@ -11,23 +11,27 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/restoflife/micro/gateway/internal/encoding"
+	"github.com/restoflife/micro/gateway/internal/service/auth"
 )
 
 var (
-	userPath = "/passport/"
+	userPath    = "/user"
+	notAuthPath = "/passport"
 )
 
 func authGroup(root *gin.RouterGroup) {
-	authApi := root.Group(userPath)
+	authApi := root.Group(notAuthPath)
 
-	RegisterAuthAPIHandler(authApi)
+	//登陆
+	authApi.POST("/login", auth.Login)
+	//注册
+	authApi.POST("/register", auth.Register)
+	//验证码
+	authApi.GET("/check", auth.Register)
 }
 
-func RegisterAuthAPIHandler(r *gin.RouterGroup) {
-
-	RegisterPOSTHandler(r, "/login", func(c *gin.Context) {
-		encoding.Ok(c, userPath)
-		c.Next()
-	})
+func adminGroup(root *gin.RouterGroup) {
+	userApi := root.Group(userPath)
+	//管理员
+	userApi.GET("/list", auth.Login)
 }

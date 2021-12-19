@@ -24,6 +24,10 @@ func ApiRouter(root *gin.Engine) {
 
 	//Authentic route
 	authGroup(api)
+
+	//administrators route
+	adminGroup(api)
+
 	//Order route
 	orderGroup(api)
 

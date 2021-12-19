@@ -18,11 +18,6 @@ var orderPath = "/order/"
 
 func orderGroup(root *gin.RouterGroup) {
 	orderAPI := root.Group(orderPath)
-
-	RegisterOrderAPIHandler(orderAPI)
-}
-
-func RegisterOrderAPIHandler(r *gin.RouterGroup) {
 	//订单详情
-	RegisterGETHandler(r, "/detail", order.GetOrderDetails)
+	orderAPI.GET("/detail", order.GetOrderDetails)
 }
