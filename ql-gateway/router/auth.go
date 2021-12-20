@@ -11,28 +11,35 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"net/http"
-	"time"
+	"github.com/restoflife/micro/gateway/internal/component/log"
+	"github.com/restoflife/micro/gateway/internal/middleware"
+	"github.com/restoflife/micro/gateway/internal/service/auth"
+	"go.uber.org/zap"
 )
 
 var (
-	userPath = "/passport/"
+	userPath       = "/passport/"
+	adminPath      = "/user/"
+	authMiddleware *middleware.GinJWTMiddleware
+	err            error
 )
 
 func authGroup(root *gin.RouterGroup) {
-	authApi := root.Group(userPath)
-
-	RegisterAuthAPIHandler(authApi)
+	authApi := root.Group(userPath).Use()
+	authMiddleware, err = middleware.AuthInit()
+	if err != nil {
+		log.Panic(zap.Error(err))
+	}
+	//登陆
+	authApi.POST("/login", authMiddleware.LoginHandler)
+	//验证码
+	authApi.GET("/captcha", auth.MakeCaptchaHandler)
+	//注册
+	authApi.POST("/register", auth.MakeRegisterHandler)
 }
 
 func adminGroup(root *gin.RouterGroup) {
-
-}
-
-func RegisterAuthAPIHandler(r *gin.RouterGroup) {
-
-	RegisterPOSTHandler(r, "/login", func(c *gin.Context) {
-		time.Sleep(time.Second * 3)
-		c.JSON(http.StatusOK, gin.H{"name": userPath})
-	})
+	adminApi := root.Group(adminPath).Use(authMiddleware.MiddlewareFunc())
+	//管理员列表
+	adminApi.GET("/list", auth.MakeUserListHandler)
 }

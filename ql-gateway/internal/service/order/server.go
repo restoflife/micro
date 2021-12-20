@@ -16,7 +16,7 @@ import (
 	"github.com/restoflife/micro/gateway/internal/protocol"
 )
 
-func GetOrderDetails(c *gin.Context) {
+func MakeOrderDetailsHandler(c *gin.Context) {
 	req := &protocol.GetOrderDetailsReq{}
 	if err := c.ShouldBind(req); err != nil {
 		encoding.Error(c, errutil.ErrIllegalParameter)

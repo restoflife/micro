@@ -15,7 +15,7 @@ import (
 )
 
 var (
-	rootPath = "/api/v1/"
+	rootPath = "/api/"
 )
 
 func ApiRouter(root *gin.Engine) {
