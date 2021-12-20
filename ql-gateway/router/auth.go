@@ -25,6 +25,10 @@ func authGroup(root *gin.RouterGroup) {
 	RegisterAuthAPIHandler(authApi)
 }
 
+func adminGroup(root *gin.RouterGroup) {
+
+}
+
 func RegisterAuthAPIHandler(r *gin.RouterGroup) {
 
 	RegisterPOSTHandler(r, "/login", func(c *gin.Context) {
