@@ -17,6 +17,7 @@ require (
 )
 
 require (
+	github.com/gin-contrib/pprof v1.3.0
 	github.com/go-playground/validator/v10 v10.9.0 // indirect
 	github.com/go-redis/redis/v8 v8.11.4
 	github.com/go-sql-driver/mysql v1.6.0

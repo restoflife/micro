@@ -14,6 +14,7 @@ import (
 	"fmt"
 	"github.com/BurntSushi/toml"
 	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	kitLog "github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/sd/etcdv3"
@@ -126,6 +127,8 @@ func httpServer() {
 	}))
 
 	handler.Use(Logger(logger), Recovery(log.Logger()))
+	//pprof
+	pprof.Register(handler)
 	//Load API route
 	router.ApiRouter(handler)
 

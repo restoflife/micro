@@ -88,11 +88,13 @@ func ExecHandler(factory sd.Factory, req interface{}) (interface{}, error) {
 	/**
 	  也可以通过retry定义尝试次数进行请求
 	*/
-	reqEndPoint = lb.Retry(3, 3*time.Second, balancer)
+	reqEndPoint = lb.Retry(3, 5*time.Second, balancer)
 	//现在我们可以通过 endPoint 发起请求了 \
 	//req := struct{}{}
-	var r interface{}
-	var err error
+	var (
+		err error
+		r   interface{}
+	)
 	if r, err = reqEndPoint(context.Background(), req); err != nil {
 		return nil, err
 	}
@@ -116,7 +118,7 @@ func GetOrderDetails(instanceAddr string) (endpoint.Endpoint, io.Closer, error) 
 		}()
 
 		svc := orderPb.NewOrderSvcClient(conn)
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
 		r, err := svc.GetOrderDetails(ctx, req)
 		if err != nil {

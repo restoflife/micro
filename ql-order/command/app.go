@@ -44,6 +44,11 @@ type mainApp struct {
 	*app.Base
 }
 
+var (
+	gRpcServer *grpc.Server
+	registrar  *etcdv3.Registrar
+)
+
 func NewApp(name string, cmd *cobra.Command) *mainApp {
 	return &mainApp{
 		Base: &app.Base{
@@ -76,11 +81,27 @@ func (m *mainApp) BootUpPrepare() {
 
 }
 
-func (m *mainApp) BootUpServer() {
-	go gRPC()
+func (m *mainApp) Run() {
+	f := func() error {
+		c := make(chan os.Signal, 1)
+		signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
+		select {
+		case sig := <-c:
+			//等待grpc连接断开
+			gRpcServer.GracefulStop()
+			//注销etcd
+			registrar.Deregister()
+			return fmt.Errorf("received signal %s", sig)
+		}
+	}
+	log.Infox("terminated grpc server", zap.Error(f()))
 }
 
-func gRPC() {
+//func (m *mainApp) BootUpServer() {
+//	gRPC()
+//}
+
+func (m *mainApp) BootUpServer() {
 	//ETCD connection parameters
 	option := etcdv3.ClientOptions{
 		DialTimeout:   time.Second * 3,
@@ -101,7 +122,7 @@ func gRPC() {
 	}
 
 	//Create a registration
-	registrar := etcdv3.NewRegistrar(client, etcdv3.Service{
+	registrar = etcdv3.NewRegistrar(client, etcdv3.Service{
 		Key:   conf.C.ServerCfg.Prefix,
 		Value: conf.C.ServerCfg.RPCAddr,
 	}, kitLog.NewNopLogger())
@@ -127,27 +148,19 @@ func gRPC() {
 		zap.String("prefix", conf.C.ServerCfg.Prefix),
 	)
 
-	gRpcServer := grpc.NewServer(opts...)
+	gRpcServer = grpc.NewServer(opts...)
 
 	RegisterAllHandlers(gRpcServer)
 
 	//reflection
 	reflection.Register(gRpcServer)
 
-	if err = gRpcServer.Serve(lis); err != nil {
-		log.Panic(zap.Error(err))
-	}
-
-	f := func() error {
-		c := make(chan os.Signal, 1)
-		signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
-		select {
-		case sig := <-c:
-			registrar.Deregister()
-			return fmt.Errorf("received signal %s", sig)
+	go func() {
+		if err = gRpcServer.Serve(lis); err != nil {
+			log.Panic(zap.Error(err))
 		}
-	}
-	log.Info(zap.Error(f()))
+	}()
+
 }
 
 func RegisterAllHandlers(s *grpc.Server) {
