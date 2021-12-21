@@ -48,13 +48,13 @@ func Error(c *gin.Context, err error) {
 	if err == errutil.ErrUnauthorized {
 		Code = http.StatusUnauthorized
 	}
-	log.Error(zap.String("[GIN-PATH]", c.Request.URL.Path), zap.Error(err))
+	log.Err(zap.String("[GIN-PATH]", c.Request.URL.Path), zap.Error(err))
 
 	c.AbortWithStatusJSON(Code, e)
 }
 
 func ErrorMsg(c *gin.Context, err error) {
-	log.Error(zap.String("[GIN-PATH]", c.Request.URL.Path), zap.Error(err))
+	log.Err(zap.String("[GIN-PATH]", c.Request.URL.Path), zap.Error(err))
 	c.AbortWithStatusJSON(http.StatusOK, errutil.New(errutil.ErrorWithMessage, err.Error()))
 }
 
@@ -65,7 +65,7 @@ func ErrorWithGRPC(c *gin.Context, err error) {
 	if sc, ok := err.(errutil.Error); ok {
 		e = sc
 	}
-	log.Error(zap.String("[GRPC-PATH]", c.Request.URL.Path), zap.Error(err))
+	log.Err(zap.String("[GRPC-PATH]", c.Request.URL.Path), zap.Error(err))
 	statusCode := http.StatusOK
 	if err == errutil.ErrUnauthorized {
 		statusCode = http.StatusUnauthorized

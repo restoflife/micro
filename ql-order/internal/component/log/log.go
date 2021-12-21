@@ -98,6 +98,13 @@ func Error(f ...zapcore.Field) {
 	logger.Error("[ERROR]", f...)
 }
 
+// Err 错误日志
+func Err(f ...zapcore.Field) {
+	_, file, line, _ := runtime.Caller(2)
+	f = append(f, zap.String("func", fmt.Sprintf("%s:%d", file, line)))
+	logger.Error("[ERROR]", f...)
+}
+
 // Info 信息日志
 func Info(f ...zapcore.Field) {
 	logger.Info("[INFO]", f...)

@@ -104,7 +104,6 @@ func (m *mainApp) Run() {
 			return fmt.Errorf("received signal %s", sig)
 		}
 	}
-
 	log.Infox("Terminated", zap.Error(f()))
 }
 
