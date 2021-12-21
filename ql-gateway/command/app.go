@@ -47,6 +47,8 @@ type mainApp struct {
 	*app.Base
 }
 
+var srv *http.Server
+
 func NewApp(name string, cmd *cobra.Command) *mainApp {
 	return &mainApp{
 		Base: &app.Base{
@@ -86,6 +88,25 @@ func (m *mainApp) BootUpServer() {
 	go httpServer()
 	//go gRPC()
 }
+
+func (m *mainApp) Run() {
+	f := func() error {
+		c := make(chan os.Signal, 1)
+		signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
+		select {
+		case sig := <-c:
+			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel()
+			if err := srv.Shutdown(ctx); err != nil {
+				log.Error(zap.Any("Server Shutdown:", zap.Error(err)))
+			}
+			return fmt.Errorf("received signal %s", sig)
+		}
+	}
+
+	log.Infox("Terminated", zap.Error(f()))
+}
+
 func httpServer() {
 	if !conf.C.ServerCfg.Mode {
 		gin.SetMode(gin.ReleaseMode)
@@ -112,22 +133,17 @@ func httpServer() {
 		zap.String("transport", "HTTP"),
 		zap.String("address", conf.C.ServerCfg.Addr),
 	)
-
-	if err = listenAndServe(conf.C.ServerCfg.Addr, handler); err != nil {
-		log.Panic(zap.Error(err))
-	}
-}
-
-func listenAndServe(addr string, handler http.Handler) error {
-	server := &http.Server{
-		Addr:           addr,
+	srv = &http.Server{
+		Addr:           conf.C.ServerCfg.Addr,
 		Handler:        handler,
 		ReadTimeout:    600 * time.Second,
 		WriteTimeout:   600 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
 
-	return server.ListenAndServe()
+	if err = srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		log.Panic(zap.Error(err))
+	}
 }
 
 func gRPC() {
