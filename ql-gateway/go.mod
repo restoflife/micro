@@ -28,6 +28,7 @@ require (
 	github.com/mitchellh/mapstructure v1.4.3
 	github.com/mojocn/base64Captcha v1.3.5
 	github.com/restoflife/micro/protos v1.1.0
+	github.com/satori/go.uuid v1.2.0
 	github.com/sony/sonyflake v1.0.0
 	github.com/tidwall/gjson v1.12.1
 	go.etcd.io/etcd/client/v3 v3.5.1 // indirect

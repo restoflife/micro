@@ -10,9 +10,11 @@
 package log
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/restoflife/micro/order/conf"
+	"github.com/restoflife/micro/order/internal/constant"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
@@ -22,6 +24,22 @@ import (
 
 // Logger 全局日志对象
 var logger *zap.Logger
+
+type ErrorHandler struct {
+	log *zap.Logger
+}
+
+func NewZapLogErrorHandler() *ErrorHandler {
+	return &ErrorHandler{
+		log: logger,
+	}
+}
+
+func (h *ErrorHandler) Handle(ctx context.Context, err error) {
+	h.log.Error(
+		fmt.Sprintf("[%s]--%s", ctx.Value(constant.ContextOrderKey), ctx.Value(constant.ContextOrderUUid)), zap.Error(err),
+	)
+}
 
 func Init() {
 	l, err := NewLogger(conf.C.RunLogCfg)
@@ -129,6 +147,10 @@ func Panic(f ...zapcore.Field) {
 	f = append(f, zap.String("func", fmt.Sprintf("%s:%d", file, line)))
 	logger.Panic("[PANIC]", f...)
 }
+func GrpcInfo(f ...zapcore.Field) {
+	logger.Debug("[GRPC]", f...)
+}
+
 func Sync() {
 	if logger != nil {
 		_ = logger.Sync()

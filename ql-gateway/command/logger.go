@@ -10,6 +10,7 @@
 package command
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/mattn/go-isatty"
 	"github.com/restoflife/micro/gateway/internal/constant"
@@ -210,12 +211,9 @@ func LoggerWithConfig(logger *zap.Logger, conf LoggerConfig) gin.HandlerFunc {
 					zap.String("Path", path),
 					zap.Int("Code", param.StatusCode),
 					zap.String("Method", param.Method),
-					//zap.String("Query", raw),
 					zap.String("ClientIP", Ip),
 					zap.String("User-Agent", c.Request.UserAgent()),
-					zap.Int64("Latency", param.Latency.Milliseconds()),
-					//zap.String("Time", param.TimeStamp.Format(constant.Layout)),
-					//zap.String("address", utils.GetLocation(Ip)),
+					zap.Any("Latency", fmt.Sprintf("%dms", param.Latency.Milliseconds())),
 				)
 			} else {
 				for _, e := range c.Errors.Errors() {

@@ -65,7 +65,7 @@ func ErrorWithGRPC(c *gin.Context, err error) {
 	if sc, ok := err.(errutil.Error); ok {
 		e = sc
 	}
-	log.Err(zap.String("[GRPC-PATH]", c.Request.URL.Path), zap.Error(err))
+	//log.Err(zap.String("[GRPC-PATH]", c.Request.URL.Path), zap.Error(err))
 	statusCode := http.StatusOK
 	if err == errutil.ErrUnauthorized {
 		statusCode = http.StatusUnauthorized

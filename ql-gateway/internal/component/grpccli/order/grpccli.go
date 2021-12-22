@@ -18,11 +18,14 @@ import (
 	"github.com/go-kit/kit/sd/lb"
 	"github.com/restoflife/micro/gateway/conf"
 	"github.com/restoflife/micro/gateway/internal/component/log"
+	"github.com/restoflife/micro/gateway/internal/constant"
 	"github.com/restoflife/micro/gateway/internal/errutil"
 	"github.com/restoflife/micro/gateway/utils"
 	orderPb "github.com/restoflife/micro/protos/order"
+	uuid "github.com/satori/go.uuid"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 	"io"
 	"time"
 )
@@ -81,16 +84,13 @@ func ExecHandler(factory sd.Factory, req interface{}) (interface{}, error) {
 	endPointer := sd.NewEndpointer(Instanced, factory, logger)
 	//创建负载均衡器
 	balancer := lb.NewRoundRobin(endPointer)
-	/**
-	  我们可以通过负载均衡器直接获取请求的endPoint，发起请求*/
+	// 我们可以通过负载均衡器直接获取请求的endPoint，发起请求
 	reqEndPoint, _ := balancer.Endpoint()
 
-	/**
-	  也可以通过retry定义尝试次数进行请求
-	*/
-	reqEndPoint = lb.Retry(3, 5*time.Second, balancer)
-	//现在我们可以通过 endPoint 发起请求了 \
-	//req := struct{}{}
+	//也可以通过retry定义尝试次数进行请求
+	//todo:临时只尝试一次
+	reqEndPoint = lb.Retry(1, 5*time.Second, balancer)
+	//现在我们可以通过 endPoint 发起请求了
 	var (
 		err error
 		r   interface{}
@@ -105,7 +105,6 @@ func GetOrderDetails(instanceAddr string) (endpoint.Endpoint, io.Closer, error) 
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req, ok := request.(*orderPb.GetOrderDetailsReq)
 		if !ok {
-
 			return nil, errutil.ErrIllegalParameter
 		}
 
@@ -118,10 +117,16 @@ func GetOrderDetails(instanceAddr string) (endpoint.Endpoint, io.Closer, error) 
 		}()
 
 		svc := orderPb.NewOrderSvcClient(conn)
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 		defer cancel()
+
+		UUID := uuid.NewV5(uuid.Must(uuid.NewV4(), nil), constant.ContextOrderUUid).String()
+		md := metadata.Pairs(constant.ContextOrderUUid, UUID)
+		ctx = metadata.NewOutgoingContext(context.Background(), md)
+
 		r, err := svc.GetOrderDetails(ctx, req)
 		if err != nil {
+			log.Error(zap.Any("uuid", UUID), zap.Error(err))
 			return nil, errutil.ErrRpcRequest
 		}
 		return r, nil

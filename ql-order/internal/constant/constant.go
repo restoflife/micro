@@ -10,10 +10,12 @@
 package constant
 
 const (
-	DbDefaultName  = "default"
-	RedisName      = "default"
-	Layout         = "2006-01-02 15:04:05"
-	UserLoginTotal = "_password_err_total" //登陆错误次数
+	DbDefaultName    = "default"
+	RedisName        = "default"
+	Layout           = "2006-01-02 15:04:05"
+	UserLoginTotal   = "_password_err_total" //登陆错误次数
+	ContextOrderUUid = "order_uuid"
+	ContextOrderKey  = "context_key"
 )
 const (
 	B  = 1

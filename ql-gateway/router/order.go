@@ -20,5 +20,5 @@ var (
 
 func orderGroup(root *gin.RouterGroup) {
 	orderAPI := root.Group(orderPath).Use(authMiddleware.MiddlewareFunc())
-	orderAPI.GET("/detail", order.MakeOrderDetailsHandler)
+	orderAPI.GET("/detail", order.MakeOrderDetailsHandler(order.NewOrderSvc()))
 }

@@ -15,12 +15,14 @@ import (
 	"github.com/BurntSushi/toml"
 	kitLog "github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/sd/etcdv3"
+	grpcTransport "github.com/go-kit/kit/transport/grpc"
 	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/restoflife/micro/order/conf"
 	"github.com/restoflife/micro/order/internal/app"
 	"github.com/restoflife/micro/order/internal/component/db"
 	"github.com/restoflife/micro/order/internal/component/log"
 	"github.com/restoflife/micro/order/internal/component/redis"
+	"github.com/restoflife/micro/order/internal/constant"
 	"github.com/restoflife/micro/order/internal/model"
 	"github.com/restoflife/micro/order/transport/order"
 	"github.com/restoflife/micro/order/utils"
@@ -30,6 +32,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/keepalive"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
 	"net"
@@ -140,14 +143,14 @@ func (m *mainApp) BootUpServer() {
 		grpc.KeepaliveParams(
 			keepalive.ServerParameters{
 				Time: time.Second * 10,
-			})}
+			}),
+	}
 
 	log.Infox("listening",
 		zap.String("transport", "GRPC"),
 		zap.String("address", conf.C.ServerCfg.RPCAddr),
 		zap.String("prefix", conf.C.ServerCfg.Prefix),
 	)
-
 	gRpcServer = grpc.NewServer(opts...)
 
 	RegisterAllHandlers(gRpcServer)
@@ -164,7 +167,15 @@ func (m *mainApp) BootUpServer() {
 }
 
 func RegisterAllHandlers(s *grpc.Server) {
-	order_pb.RegisterOrderSvcServer(s, order.NewUserServer())
+	opts := []grpcTransport.ServerOption{
+		grpcTransport.ServerBefore(func(ctx context.Context, md metadata.MD) context.Context {
+			ctx = context.WithValue(ctx, constant.ContextOrderUUid, md.Get(constant.ContextOrderUUid))
+			return ctx
+		}),
+		grpcTransport.ServerErrorHandler(log.NewZapLogErrorHandler()),
+	}
+
+	order_pb.RegisterOrderSvcServer(s, order.NewUserServer(opts...))
 }
 
 // UnaryServerInterceptor Interceptor log printing
@@ -176,7 +187,7 @@ func UnaryServerInterceptor(ctx context.Context, req interface{}, info *grpc.Una
 			log.Error(zap.Error(err))
 		}
 	}()
+	ctx = context.WithValue(ctx, constant.ContextOrderKey, info.FullMethod)
 	log.Infox(info.FullMethod, zap.Any("request", fmt.Sprintf("%+v", req)))
-
 	return handler(ctx, req)
 }

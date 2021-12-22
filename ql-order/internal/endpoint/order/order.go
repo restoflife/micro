@@ -23,11 +23,6 @@ func MakeOrderDetailsEndpoint(svc order.IAuthAPI) endpoint.Endpoint {
 		if !ok {
 			return nil, errutil.ErrEndpointType
 		}
-		resp, err := svc.OrderDetails(ctx, req)
-
-		if err != nil {
-			return nil, err
-		}
-		return resp, nil
+		return svc.OrderDetails(ctx, req)
 	}
 }
