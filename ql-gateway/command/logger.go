@@ -10,7 +10,6 @@
 package command
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/mattn/go-isatty"
 	"github.com/restoflife/micro/gateway/internal/constant"
@@ -24,14 +23,6 @@ import (
 	"time"
 )
 
-type consoleColorModeValue int
-
-const (
-	autoColor consoleColorModeValue = iota
-	disableColor
-	forceColor
-)
-
 const (
 	green   = "\033[97;42m"
 	white   = "\033[90;47m"
@@ -42,8 +33,6 @@ const (
 	cyan    = "\033[97;46m"
 	reset   = "\033[0m"
 )
-
-var consoleColorMode = autoColor
 
 // LoggerConfig defines the config for Logger middleware.
 type LoggerConfig struct {
@@ -204,7 +193,6 @@ func LoggerWithConfig(logger *zap.Logger, conf LoggerConfig) gin.HandlerFunc {
 			}
 
 			param.Path = path
-
 			if param.ErrorMessage == "" {
 				Ip := utils.ClientIp(c.Request)
 				logger.Info("GIN",
@@ -213,7 +201,7 @@ func LoggerWithConfig(logger *zap.Logger, conf LoggerConfig) gin.HandlerFunc {
 					zap.String("Method", param.Method),
 					zap.String("ClientIP", Ip),
 					zap.String("User-Agent", c.Request.UserAgent()),
-					zap.Any("Latency", fmt.Sprintf("%dms", param.Latency.Milliseconds())),
+					zap.String("Latency", param.Latency.String()),
 				)
 			} else {
 				for _, e := range c.Errors.Errors() {
