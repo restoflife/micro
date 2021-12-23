@@ -100,10 +100,6 @@ func (m *mainApp) Run() {
 	log.Infox("terminated grpc server", zap.Error(f()))
 }
 
-//func (m *mainApp) BootUpServer() {
-//	gRPC()
-//}
-
 func (m *mainApp) BootUpServer() {
 	//ETCD connection parameters
 	option := etcdv3.ClientOptions{

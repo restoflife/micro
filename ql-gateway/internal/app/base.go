@@ -13,7 +13,6 @@ import (
 	"github.com/restoflife/micro/gateway/internal/component/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"go.uber.org/zap"
 )
 
 type Base struct {
@@ -45,11 +44,11 @@ func (b *Base) BootUpAfter() {}
 func (b *Base) InitLogger() {
 	log.Init()
 	defer log.Sync()
-	logger, err := zap.NewDevelopment()
-	if err != nil {
-		log.Fatal(zap.Error(err))
-	}
-	zap.ReplaceGlobals(logger)
+	//logger, err := zap.NewDevelopment()
+	//if err != nil {
+	//	log.Fatal(zap.Error(err))
+	//}
+	//zap.ReplaceGlobals(logger)
 }
 
 func (b *Base) Run() {

@@ -70,12 +70,12 @@ func (m *mainApp) InitConfig() {
 }
 
 func (m *mainApp) BootUpPrepare() {
-	log.Infox("initialize xorm connection to database")
+	log.Infox("initialize xorm connection to database....")
 	if err := db.MustBootUp(conf.C.DB, db.SetSync2Func(model.Sync)); err != nil {
 		log.Panic(zap.Error(err))
 	}
 
-	log.Infox("initialize connection to redis")
+	log.Infox("initialize connection to redis...")
 	if err := redis.MustBootUp(conf.C.Redis); err != nil {
 		log.Panic(zap.Error(err))
 	}
@@ -135,11 +135,12 @@ func httpServer() {
 		zap.String("transport", "HTTP"),
 		zap.String("address", conf.C.ServerCfg.Addr),
 	)
+
 	srv = &http.Server{
 		Addr:           conf.C.ServerCfg.Addr,
 		Handler:        handler,
-		ReadTimeout:    600 * time.Second,
-		WriteTimeout:   600 * time.Second,
+		ReadTimeout:    10 * time.Second,
+		WriteTimeout:   10 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
 
