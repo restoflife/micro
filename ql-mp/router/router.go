@@ -25,6 +25,6 @@ func API(root *gin.Engine) {
 	//不要token
 	noTokenApi := root.Group(noTokenPath)
 	{
-		noTokenApi.POST("/login", user.MakeLoginHandler(user.NewOrderSvc()))
+		noTokenApi.GET("/login", user.MakeLoginHandler(user.NewOrderSvc()))
 	}
 }

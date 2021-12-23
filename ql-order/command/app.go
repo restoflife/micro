@@ -33,12 +33,14 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/peer"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
 	"net"
 	"os"
 	"os/signal"
 	"runtime/debug"
+	"strings"
 	"syscall"
 	"time"
 )
@@ -183,7 +185,20 @@ func UnaryServerInterceptor(ctx context.Context, req interface{}, info *grpc.Una
 			log.Error(zap.Error(err))
 		}
 	}()
+	pr, ok := peer.FromContext(ctx)
+	if !ok {
+		return nil, status.Errorf(codes.Unauthenticated, "[getClinetIP] invoke FromContext() failed")
+	}
+	if pr.Addr == net.Addr(nil) {
+		return nil, status.Errorf(codes.Unauthenticated, "[getClientIP] peer.Addr is nil")
+	}
+	addSlice := strings.Split(pr.Addr.String(), ":")
+	if len(addSlice) < 1 {
+		addSlice = append(addSlice, "未知ip来源")
+	}
+
+	log.Info(zap.Any("pr", pr))
 	ctx = context.WithValue(ctx, constant.ContextOrderKey, info.FullMethod)
-	log.Infox(info.FullMethod, zap.Any("request", fmt.Sprintf("%+v", req)))
+	log.Infox(info.FullMethod, zap.String("ip", addSlice[0]), zap.Any("request", fmt.Sprintf("%+v", req)))
 	return handler(ctx, req)
 }

@@ -24,7 +24,7 @@ type PassportAPI interface {
 type IPassportAPI struct{}
 
 func (I *IPassportAPI) login(ctx context.Context, req *protocol.MpLoginReq) (*protocol.MpLoginResp, error) {
-	uri := fmt.Sprintf("https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code", "wx5f9a1e460bce066d", "", req.Code)
+	uri := fmt.Sprintf("https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code", "wx156a410597adc5e5", "86435cebea493a2e141dc258a62f2cfa", req.Code)
 	_, data := utils.Get(uri)
 	fmt.Println(string(data))
 	//TODO implement me

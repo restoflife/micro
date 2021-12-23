@@ -11,7 +11,7 @@ package protocol
 
 type (
 	MpLoginReq struct {
-		Code string `json:"code" binding:"required"`
+		Code string `from:"code"`
 	}
 	MpLoginResp struct {
 	}

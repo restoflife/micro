@@ -19,7 +19,7 @@ import (
 func MakeLoginHandler(svc PassportAPI) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		req := &protocol.MpLoginReq{}
-		if err := c.ShouldBindJSON(req); err != nil {
+		if err := c.ShouldBind(req); err != nil {
 			encoding.Error(c, errutil.ErrIllegalParameter)
 			return
 		}
