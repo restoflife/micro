@@ -23,14 +23,6 @@ import (
 	"time"
 )
 
-type consoleColorModeValue int
-
-const (
-	autoColor consoleColorModeValue = iota
-	disableColor
-	forceColor
-)
-
 const (
 	green   = "\033[97;42m"
 	white   = "\033[90;47m"
@@ -41,8 +33,6 @@ const (
 	cyan    = "\033[97;46m"
 	reset   = "\033[0m"
 )
-
-var consoleColorMode = autoColor
 
 // LoggerConfig defines the config for Logger middleware.
 type LoggerConfig struct {
@@ -203,19 +193,15 @@ func LoggerWithConfig(logger *zap.Logger, conf LoggerConfig) gin.HandlerFunc {
 			}
 
 			param.Path = path
-
 			if param.ErrorMessage == "" {
 				Ip := utils.ClientIp(c.Request)
 				logger.Info("GIN",
 					zap.String("Path", path),
 					zap.Int("Code", param.StatusCode),
 					zap.String("Method", param.Method),
-					//zap.String("Query", raw),
 					zap.String("ClientIP", Ip),
 					zap.String("User-Agent", c.Request.UserAgent()),
-					zap.Int64("Latency", param.Latency.Milliseconds()),
-					//zap.String("Time", param.TimeStamp.Format(constant.Layout)),
-					//zap.String("address", utils.GetLocation(Ip)),
+					zap.String("Latency", param.Latency.String()),
 				)
 			} else {
 				for _, e := range c.Errors.Errors() {

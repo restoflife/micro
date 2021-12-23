@@ -14,10 +14,11 @@ import (
 	"github.com/restoflife/micro/gateway/internal/service/order"
 )
 
-var orderPath = "/order/"
+var (
+	orderPath = "/order/"
+)
 
 func orderGroup(root *gin.RouterGroup) {
-	orderAPI := root.Group(orderPath)
-	//订单详情
-	orderAPI.GET("/detail", order.GetOrderDetails)
+	orderAPI := root.Group(orderPath).Use(authMiddleware.MiddlewareFunc())
+	orderAPI.GET("/detail", order.MakeOrderDetailsHandler(order.NewOrderSvc()))
 }

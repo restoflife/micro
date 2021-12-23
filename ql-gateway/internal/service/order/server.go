@@ -16,21 +16,38 @@ import (
 	"github.com/restoflife/micro/gateway/internal/protocol"
 )
 
-func GetOrderDetails(c *gin.Context) {
-	req := &protocol.GetOrderDetailsReq{}
-	if err := c.ShouldBind(req); err != nil {
-		encoding.Error(c, errutil.ErrIllegalParameter)
-		return
+func MakeOrderDetailsHandler(svc API) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		req := &protocol.GetOrderDetailsReq{}
+		if err := c.ShouldBind(req); err != nil {
+			encoding.Error(c, errutil.ErrIllegalParameter)
+			return
+		}
+		resp, err := svc.OrderDetails(c, req)
+		if err != nil {
+			encoding.ErrorWithGRPC(c, err)
+			return
+		}
+		encoding.Ok(c, resp)
+		c.Next()
 	}
-	resp, err := getOrderDetails(req.Id)
-	// todo: check if
-	//resp, err := redis.CheckCache(fmt.Sprintf("id:%d", req.Id), func() (interface{}, error) {
-	//	return getOrderDetails(req.Id)
-	//}, time.Duration(60), true)
-	if err != nil {
-		encoding.ErrorWithGRPC(c, err)
-		return
-	}
-	encoding.Ok(c, resp)
-
 }
+
+//func MakeOrderDetailsHandler(c *gin.Context) {
+//	req := &protocol.GetOrderDetailsReq{}
+//	if err := c.ShouldBind(req); err != nil {
+//		encoding.Error(c, errutil.ErrIllegalParameter)
+//		return
+//	}
+//	resp, err := getOrderDetails(req.Id)
+//	// todo: check if
+//	//resp, err := redis.CheckCache(fmt.Sprintf("id:%d", req.Id), func() (interface{}, error) {
+//	//	return getOrderDetails(req.Id)
+//	//}, time.Duration(60), true)
+//	if err != nil {
+//		encoding.ErrorWithGRPC(c, err)
+//		return
+//	}
+//	encoding.Ok(c, resp)
+//	c.Next()
+//}

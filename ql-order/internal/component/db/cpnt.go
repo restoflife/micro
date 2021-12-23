@@ -65,12 +65,14 @@ func MustBootUp(configs map[string]*conf.ConfigLite, opts ...Option) error {
 		ormMgr[name] = db
 	}
 	go func() {
-		ticker := time.NewTicker(time.Minute * 5)
+		ticker := time.NewTicker(time.Minute * 10)
 		for {
 			select {
 			case <-ticker.C:
 				for _, v := range ormMgr {
-					_ = v.Ping()
+					if err := v.Ping(); err != nil {
+						l.Error(zap.Error(err))
+					}
 				}
 			}
 		}

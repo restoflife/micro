@@ -1,0 +1,16 @@
+@echo off
+md  H:\golang\micro\ql-mp\command
+md  H:\golang\micro\ql-mp\conf
+md  H:\golang\micro\ql-mp\configs
+md  H:\golang\micro\ql-mp\internal
+md  H:\golang\micro\ql-mp\utils
+md  H:\golang\micro\ql-mp\internal\app
+md  H:\golang\micro\ql-mp\internal\component
+md  H:\golang\micro\ql-mp\internal\component\db
+md  H:\golang\micro\ql-mp\internal\component\redis
+md  H:\golang\micro\ql-mp\internal\component\mongo
+md  H:\golang\micro\ql-mp\internal\component\log
+md  H:\golang\micro\ql-mp\internal\endpoint
+md  H:\golang\micro\ql-mp\internal\constant
+md  H:\golang\micro\ql-mp\internal\model
+md  H:\golang\micro\ql-mp\internal\service

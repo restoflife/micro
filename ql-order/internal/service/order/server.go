@@ -25,6 +25,5 @@ type IAuthAPI interface {
 }
 
 func (a *AuthAPI) OrderDetails(ctx context.Context, req *orderPb.GetOrderDetailsReq) (resp *orderPb.GetOrderDetailsResp, err error) {
-
 	return getOrderDetails(req.Id)
 }

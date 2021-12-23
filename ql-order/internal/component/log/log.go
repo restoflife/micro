@@ -10,18 +10,37 @@
 package log
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/restoflife/micro/order/conf"
+	"github.com/restoflife/micro/order/internal/constant"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
 	"os"
 	"runtime"
+	"time"
 )
 
 // Logger 全局日志对象
 var logger *zap.Logger
+
+type ErrorHandler struct {
+	log *zap.Logger
+}
+
+func NewZapLogErrorHandler() *ErrorHandler {
+	return &ErrorHandler{
+		log: logger,
+	}
+}
+
+func (h *ErrorHandler) Handle(ctx context.Context, err error) {
+	h.log.Error(
+		fmt.Sprintf("[%s]--%s", ctx.Value(constant.ContextOrderKey), ctx.Value(constant.ContextOrderUUid)), zap.Error(err),
+	)
+}
 
 func Init() {
 	l, err := NewLogger(conf.C.RunLogCfg)
@@ -39,7 +58,11 @@ func Logger() *zap.Logger {
 
 func NewLogger(logCfg *conf.LogConfig) (*zap.Logger, error) {
 
-	encoder := createEncoder()
+	encoder := createFileEncoder()
+	consoleEncoder := createConsoleEncoder()
+	debugPriority := zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
+		return lvl <= zapcore.ErrorLevel
+	})
 	cores := make([]zapcore.Core, 0)
 	cores = append(
 		cores,
@@ -54,21 +77,39 @@ func NewLogger(logCfg *conf.LogConfig) (*zap.Logger, error) {
 			createLevelEnablerFunc(logCfg.Level),
 		),
 		zapcore.NewCore(
-			encoder,
-			zapcore.Lock(os.Stdout),
-			zap.DebugLevel,
+			consoleEncoder,
+			zapcore.Lock(os.Stderr),
+			debugPriority,
 		),
 	)
 	return zap.New(zapcore.NewTee(cores...)), nil
 }
 
-func createEncoder() zapcore.Encoder {
+//日志控制台配置
+func createConsoleEncoder() zapcore.Encoder {
+	encoderConfig := zap.NewDevelopmentEncoderConfig()
+	//日志时间格式
+	encoderConfig.EncodeTime = timeEncoder
+	//将级别序列化为全大写字符串并添加颜色
+	encoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
+	encoderConfig.EncodeDuration = zapcore.SecondsDurationEncoder
+	encoderConfig.EncodeCaller = zapcore.ShortCallerEncoder
+	return zapcore.NewConsoleEncoder(encoderConfig)
+}
+
+//日志文件配置
+func createFileEncoder() zapcore.Encoder {
 	encoderConfig := zap.NewProductionEncoderConfig()
-	encoderConfig.EncodeTime = zapcore.RFC3339TimeEncoder
+	//日志时间格式
+	encoderConfig.EncodeTime = timeEncoder
+	//将级别序列化为全大写字符串
 	encoderConfig.EncodeLevel = zapcore.CapitalLevelEncoder
 	encoderConfig.EncodeDuration = zapcore.SecondsDurationEncoder
 	encoderConfig.EncodeCaller = zapcore.ShortCallerEncoder
 	return zapcore.NewConsoleEncoder(encoderConfig)
+}
+func timeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
+	enc.AppendString(t.Format(constant.Layout))
 }
 
 func createLevelEnablerFunc(input string) zap.LevelEnablerFunc {
@@ -98,6 +139,13 @@ func Error(f ...zapcore.Field) {
 	logger.Error("[ERROR]", f...)
 }
 
+// Err 错误日志
+func Err(f ...zapcore.Field) {
+	_, file, line, _ := runtime.Caller(2)
+	f = append(f, zap.String("func", fmt.Sprintf("%s:%d", file, line)))
+	logger.Error("[ERROR]", f...)
+}
+
 // Info 信息日志
 func Info(f ...zapcore.Field) {
 	logger.Info("[INFO]", f...)
@@ -122,6 +170,10 @@ func Panic(f ...zapcore.Field) {
 	f = append(f, zap.String("func", fmt.Sprintf("%s:%d", file, line)))
 	logger.Panic("[PANIC]", f...)
 }
+func GrpcInfo(f ...zapcore.Field) {
+	logger.Debug("[GRPC]", f...)
+}
+
 func Sync() {
 	if logger != nil {
 		_ = logger.Sync()

@@ -15,7 +15,7 @@ import (
 )
 
 var (
-	rootPath = "/api/v1/"
+	rootPath = "/api/"
 )
 
 func ApiRouter(root *gin.Engine) {
@@ -24,10 +24,8 @@ func ApiRouter(root *gin.Engine) {
 
 	//Authentic route
 	authGroup(api)
-
 	//administrators route
 	adminGroup(api)
-
 	//Order route
 	orderGroup(api)
 

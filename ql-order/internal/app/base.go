@@ -10,14 +10,10 @@
 package app
 
 import (
-	"fmt"
 	"github.com/restoflife/micro/order/internal/component/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
-	"os"
-	"os/signal"
-	"syscall"
 )
 
 type Base struct {
@@ -56,18 +52,4 @@ func (b *Base) InitLogger() {
 	zap.ReplaceGlobals(logger)
 }
 
-func (b *Base) Run() {
-
-	// This function just sits and waits for ctrl-C or kill.
-	f := func() error {
-		c := make(chan os.Signal, 1)
-		signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
-		select {
-		case sig := <-c:
-			//time.Sleep(time.Second * 5)
-			return fmt.Errorf("received signal %s", sig)
-		}
-	}
-
-	zap.L().Info("terminated", zap.Error(f()))
-}
+func (b *Base) Run() {}

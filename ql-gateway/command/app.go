@@ -14,6 +14,7 @@ import (
 	"fmt"
 	"github.com/BurntSushi/toml"
 	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	kitLog "github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/sd/etcdv3"
@@ -47,6 +48,8 @@ type mainApp struct {
 	*app.Base
 }
 
+var srv *http.Server
+
 func NewApp(name string, cmd *cobra.Command) *mainApp {
 	return &mainApp{
 		Base: &app.Base{
@@ -67,12 +70,12 @@ func (m *mainApp) InitConfig() {
 }
 
 func (m *mainApp) BootUpPrepare() {
-	log.Infox("initialize xorm connection to database")
+	log.Infox("initialize xorm connection to database....")
 	if err := db.MustBootUp(conf.C.DB, db.SetSync2Func(model.Sync)); err != nil {
 		log.Panic(zap.Error(err))
 	}
 
-	log.Infox("initialize connection to redis")
+	log.Infox("initialize connection to redis...")
 	if err := redis.MustBootUp(conf.C.Redis); err != nil {
 		log.Panic(zap.Error(err))
 	}
@@ -86,6 +89,24 @@ func (m *mainApp) BootUpServer() {
 	go httpServer()
 	//go gRPC()
 }
+
+func (m *mainApp) Run() {
+	f := func() error {
+		c := make(chan os.Signal, 1)
+		signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
+		select {
+		case sig := <-c:
+			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel()
+			if err := srv.Shutdown(ctx); err != nil {
+				log.Error(zap.Any("Server Shutdown:", zap.Error(err)))
+			}
+			return fmt.Errorf("received signal %s", sig)
+		}
+	}
+	log.Infox("Terminated", zap.Error(f()))
+}
+
 func httpServer() {
 	if !conf.C.ServerCfg.Mode {
 		gin.SetMode(gin.ReleaseMode)
@@ -105,6 +126,8 @@ func httpServer() {
 	}))
 
 	handler.Use(Logger(logger), Recovery(log.Logger()))
+	//pprof
+	pprof.Register(handler)
 	//Load API route
 	router.ApiRouter(handler)
 
@@ -113,21 +136,17 @@ func httpServer() {
 		zap.String("address", conf.C.ServerCfg.Addr),
 	)
 
-	if err = listenAndServe(conf.C.ServerCfg.Addr, handler); err != nil {
-		log.Panic(zap.Error(err))
-	}
-}
-
-func listenAndServe(addr string, handler http.Handler) error {
-	server := &http.Server{
-		Addr:           addr,
+	srv = &http.Server{
+		Addr:           conf.C.ServerCfg.Addr,
 		Handler:        handler,
-		ReadTimeout:    600 * time.Second,
-		WriteTimeout:   600 * time.Second,
+		ReadTimeout:    10 * time.Second,
+		WriteTimeout:   10 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
 
-	return server.ListenAndServe()
+	if err = srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		log.Panic(zap.Error(err))
+	}
 }
 
 func gRPC() {

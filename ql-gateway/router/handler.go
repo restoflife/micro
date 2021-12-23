@@ -13,6 +13,7 @@ import "github.com/gin-gonic/gin"
 
 func RegisterPOSTHandler(r *gin.RouterGroup, path string, handlers ...gin.HandlerFunc) {
 	r.POST(path, handlers...)
+
 }
 
 func RegisterGETHandler(r *gin.RouterGroup, path string, handlers ...gin.HandlerFunc) {

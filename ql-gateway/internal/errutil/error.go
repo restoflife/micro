@@ -18,6 +18,7 @@ type Error struct {
 	Content string      `json:"content,omitempty"`
 	Stack   string      `json:"stack,omitempty"`
 	Data    interface{} `json:"data,omitempty"`
+	Status  string      `json:"status"`
 }
 
 // Error implements error.
@@ -29,9 +30,11 @@ func (e Error) Error() string {
 }
 func New(code int, msg string) Error {
 	return Error{
-		Code: code,
-		Msg:  msg,
-		Time: time.Now().Unix(),
+		Code:   code,
+		Msg:    msg,
+		Time:   time.Now().Unix(),
+		Status: "fail",
+		Data:   "",
 	}
 }
 
@@ -54,9 +57,11 @@ const (
 	Unknown = iota + 2000
 	illegalParameter
 	unauthorized
+	accountExist
 )
 
 var (
 	ErrUnauthorized     = New(unauthorized, "unauthorized")
 	ErrIllegalParameter = New(illegalParameter, "illegal parameter")
+	ErrAccountExist     = New(accountExist, "account exist")
 )
