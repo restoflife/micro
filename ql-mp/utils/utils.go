@@ -137,3 +137,15 @@ func Get(url string) (int, []byte) {
 	}
 	return resp.StatusCode, result.Bytes()
 }
+
+func PageIndex(page, pageSize int) (limit, offset int) {
+	if page <= 0 {
+		page = 1
+	}
+	if pageSize <= 0 {
+		pageSize = 10
+	}
+	offset = (page - 1) * pageSize
+	limit = pageSize
+	return
+}

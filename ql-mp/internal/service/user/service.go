@@ -11,21 +11,24 @@ package user
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/restoflife/micro/mp/internal/component/log"
 	"github.com/restoflife/micro/mp/internal/encoding"
 	"github.com/restoflife/micro/mp/internal/errutil"
 	"github.com/restoflife/micro/mp/internal/protocol"
+	"go.uber.org/zap"
 )
 
 func MakeLoginHandler(svc PassportAPI) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		req := &protocol.MpLoginReq{}
-		if err := c.ShouldBind(req); err != nil {
+		if err := c.ShouldBindJSON(req); err != nil {
 			encoding.Error(c, errutil.ErrIllegalParameter)
 			return
 		}
 		resp, err := svc.login(c, req)
 		if err != nil {
-			encoding.Error(c, err)
+			log.Error(zap.Error(err))
+			encoding.ErrorMsg(c, errutil.ErrInternalServer)
 			return
 		}
 		encoding.Ok(c, resp)

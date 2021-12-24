@@ -66,6 +66,7 @@ type (
 		EtcdCaCert  string `toml:"etcd_ca_cert"`
 		Prefix      string `toml:"prefix"`
 		OrderPrefix string `toml:"order_prefix"`
+		MpPrefix    string `toml:"mp_prefix"`
 		LogPrefix   string `toml:"log_prefix"`
 	}
 )

@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package user;
+option go_package = "./;user_pb"; // 指定路径
+
+service UserSvc {
+  //微信用户列表
+  rpc GetUserList(getUserListReq) returns (getUserListResp) {}
+}
+
+message getUserListReq {
+  int32 page = 1;
+  int32 pageSize = 2;
+  uint64 uid = 3;
+  string nickname = 4;
+}
+message getUserListResp {
+  int64 total = 1;
+  repeated getUserListItem list = 2;
+}
+message getUserListItem {
+  string uid = 1;
+  string avatar = 2;
+  string nickname = 3;
+}

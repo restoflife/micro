@@ -10,10 +10,15 @@
 package constant
 
 const (
-	DbDefaultName    = "default"
-	RedisName        = "default"
-	Layout           = "2006-01-02 15:04:05"
-	ContextOrderUUid = "order_uuid"
+	DbDefaultName        = "default"
+	RedisName            = "default"
+	Layout               = "2006-01-02 15:04:05"
+	ContextMpUUid        = "mp_uuid"
+	UrlCode2Session      = "https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code"
+	UrlGetAccessToken    = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s"
+	RedisPrefixToken     = "ql_wechat_token:"
+	RedisKeyWxSessionKey = "ql_wx_session_key:"
+	ContextOrderKey      = "context_key"
 )
 const (
 	B  = 1

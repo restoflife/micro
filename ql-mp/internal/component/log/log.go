@@ -10,6 +10,7 @@
 package log
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/restoflife/micro/mp/conf"
@@ -24,6 +25,22 @@ import (
 
 // Logger 全局日志对象
 var logger *zap.Logger
+
+type ErrorHandler struct {
+	log *zap.Logger
+}
+
+func NewZapLogErrorHandler() *ErrorHandler {
+	return &ErrorHandler{
+		log: logger,
+	}
+}
+
+func (h *ErrorHandler) Handle(ctx context.Context, err error) {
+	h.log.Error(
+		fmt.Sprintf("[%s]--%s", ctx.Value(constant.ContextOrderKey), ctx.Value(constant.ContextMpUUid)), zap.Error(err),
+	)
+}
 
 func Init() {
 	l, err := NewLogger(conf.C.RunLogCfg)

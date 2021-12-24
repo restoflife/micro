@@ -21,20 +21,19 @@ type TimeStruct struct {
 	DeletedAt time.Time `json:"deleted_at" xorm:"'deleted_at' deleted comment('删除时间') DATETIME"`
 }
 type MpUser struct {
-	Id            int    `json:"id" xorm:"'id' not null pk autoincr INT"`
-	Uid           int64  `json:"uid" xorm:"'uid' not null comment('平台唯一id') index BIGINT"`
-	Phone         string `json:"phone" xorm:"'phone' not null comment('电话') VARCHAR(50)"`
-	Openid        string `json:"openid" xorm:"'openid' not null comment('用户的标识，对当前公众号唯一') index VARCHAR(30)"`
-	RoutineOpenid string `json:"routine_openid" xorm:"'routine_openid' not null comment('小程序唯一身份ID') VARCHAR(32)"`
-	Nickname      string `json:"nickname" xorm:"'nickname' not null comment('用户的昵称') VARCHAR(64)"`
-	Avatar        string `json:"avatar" xorm:"'avatar' not null comment('头像') VARCHAR(255)"`
-	Sex           int    `json:"sex" xorm:"'sex' not null default 0 comment('用户的性别，值为1时是男性，值为2时是女性，值为0时是未知') TINYINT(1)"`
-	City          string `json:"city" xorm:"'city' not null comment('用户所在城市') VARCHAR(64)"`
-	Language      string `json:"language" xorm:"'language' not null comment('用户的语言，简体中文为zh_CN') VARCHAR(64)"`
-	Province      string `json:"province" xorm:"'province' not null comment('用户所在省份') VARCHAR(64)"`
-	Country       string `json:"country" xorm:"'country' not null comment('用户所在国家') VARCHAR(64)"`
-	SessionKey    string `json:"session_key" xorm:"'session_key' comment('小程序用户会话密匙') VARCHAR(32)"`
-	TimeStruct    `xorm:"extends"`
+	Id         int    `json:"id" xorm:"'id' not null pk autoincr INT"`
+	Uid        int64  `json:"uid" xorm:"'uid' not null comment('平台唯一id') index BIGINT"`
+	Phone      string `json:"phone" xorm:"'phone' not null comment('电话') VARCHAR(50)"`
+	Openid     string `json:"openid" xorm:"'openid' not null comment('用户的标识，对当前公众号唯一') index VARCHAR(30)"`
+	Nickname   string `json:"nickname" xorm:"'nickname' not null comment('用户的昵称') VARCHAR(64)"`
+	Avatar     string `json:"avatar" xorm:"'avatar' not null comment('头像') VARCHAR(255)"`
+	Sex        int    `json:"sex" xorm:"'sex' not null default 0 comment('用户的性别，值为1时是男性，值为2时是女性，值为0时是未知') TINYINT(1)"`
+	City       string `json:"city" xorm:"'city' not null comment('用户所在城市') VARCHAR(64)"`
+	Language   string `json:"language" xorm:"'language' not null comment('用户的语言，简体中文为zh_CN') VARCHAR(64)"`
+	Province   string `json:"province" xorm:"'province' not null comment('用户所在省份') VARCHAR(64)"`
+	Country    string `json:"country" xorm:"'country' not null comment('用户所在国家') VARCHAR(64)"`
+	SessionKey string `json:"session_key" xorm:"'session_key' comment('小程序用户会话密匙') VARCHAR(32)"`
+	TimeStruct `xorm:"extends"`
 }
 
 func (*MpUser) TableName() string {

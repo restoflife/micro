@@ -28,5 +28,7 @@ func ApiRouter(root *gin.Engine) {
 	adminGroup(api)
 	//Order route
 	orderGroup(api)
+	//mp route
+	mpApiGroup(api)
 
 }
