@@ -18,16 +18,19 @@ type (
 		AccessLogCfg *LogConfig             `toml:"accessLog"`
 		DB           map[string]*ConfigLite `toml:"db"`
 		Redis        *RedisConfig           `toml:"redis"`
-		Login        *login                 `toml:"login"`
+		Wechat       wechat                 `toml:"wechat"`
+		Jwt          *jwt                   `toml:"jwt"`
 	}
 )
 
 type (
-	login struct {
-		Total   int    `toml:"total"`
-		Time    int    `toml:"time"`
+	jwt struct {
 		Key     string `toml:"key"`
-		Timeout int64  `toml:"timeout"`
+		TimeOut int    `toml:"timeout"`
+	}
+	wechat struct {
+		APPID  string `toml:"appid"`
+		SECRET string `toml:"secret"`
 	}
 	ConfigLite struct {
 		Driver  string `toml:"driver"`

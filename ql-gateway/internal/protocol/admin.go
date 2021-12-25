@@ -66,3 +66,10 @@ type TokenClaims struct {
 	Uid     string `json:"uid"`
 	jwt.StandardClaims
 }
+
+type GetMpUserListReq struct {
+	Page     int32  `form:"page" binding:"required"`
+	PageSize int32  `form:"page_size" binding:"required"`
+	Uid      int64  `form:"uid"`
+	Nickname string `form:"nickname"`
+}

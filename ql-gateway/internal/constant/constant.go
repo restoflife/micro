@@ -15,6 +15,7 @@ const (
 	Layout           = "2006-01-02 15:04:05"
 	UserLoginTotal   = "_password_err_total" //登陆错误次数
 	ContextOrderUUid = "order_uuid"
+	ContextMpUUid    = "mp_uuid"
 )
 const (
 	B  = 1

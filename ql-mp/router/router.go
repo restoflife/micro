@@ -10,7 +10,9 @@
 package router
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/restoflife/micro/mp/internal/middleware"
 	"github.com/restoflife/micro/mp/internal/service/user"
 	"net/http"
 )
@@ -25,6 +27,12 @@ func API(root *gin.Engine) {
 	//不要token
 	noTokenApi := root.Group(noTokenPath)
 	{
-		noTokenApi.GET("/login", user.MakeLoginHandler(user.NewOrderSvc()))
+		noTokenApi.POST("/login", user.MakeLoginHandler(user.NewUserSvc()))
+	}
+	tokenApi := root.Group(needTokenPath).Use(middleware.JWTValidationMiddleware())
+	{
+		tokenApi.GET("/x", func(context *gin.Context) {
+			fmt.Println(context)
+		})
 	}
 }

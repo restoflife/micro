@@ -58,10 +58,12 @@ const (
 	illegalParameter
 	unauthorized
 	accountExist
+	endpointType
 )
 
 var (
 	ErrUnauthorized     = New(unauthorized, "unauthorized")
 	ErrIllegalParameter = New(illegalParameter, "illegal parameter")
 	ErrAccountExist     = New(accountExist, "account exist")
+	ErrEndpointType     = New(endpointType, "endpoint request type error")
 )

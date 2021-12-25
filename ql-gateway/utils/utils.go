@@ -128,3 +128,15 @@ func DriverDigitFunc() (id, b64s string, err error) {
 	captcha := base64Captcha.NewCaptcha(driver, store)
 	return captcha.Generate()
 }
+
+func PageIndex(page, pageSize int) (limit, offset int) {
+	if page <= 0 {
+		page = 1
+	}
+	if pageSize <= 0 {
+		pageSize = 10
+	}
+	offset = (page - 1) * pageSize
+	limit = pageSize
+	return
+}
