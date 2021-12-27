@@ -6,7 +6,7 @@ mode = true
 #rpc 地址
 rpc_addr = "0.0.0.0:1200"
 #注册服务发现 etcd地址
-etcd = "http://127.0.0.1:2379"
+etcd = "http://127.0.0.1:2377"
 #./config/etcd.pem
 etcd_cert = ""
 #./config/etcd-key.pem

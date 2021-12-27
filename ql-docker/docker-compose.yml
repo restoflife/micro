@@ -3,7 +3,7 @@ version: '3'
 services:
   golang:
     build:
-      context: ./golang
+      context: ./go
       dockerfile: Dockerfile
     container_name: golang
     hostname: golang
@@ -20,6 +20,8 @@ services:
     volumes:
       - "../ql-gateway:/www/ql-gateway"
       - "../ql-protos:/www/ql-protos"
+      - "../ql-mp:/www/ql-mp"
+      - "../ql-order:/www/ql-order"
     tty: true
   redis:
     image: redis:6.0.6-alpine
@@ -32,7 +34,7 @@ services:
       - "6378:6379"
   mongodb:
     build:
-      context: ./mongodb
+      context: ./mongo
       dockerfile: Dockerfile
     container_name: mongodb
     hostname: mongodb
@@ -75,15 +77,15 @@ services:
     environment:
       - "ETCD_ADVERTISE_CLIENT_URLS=http://0.0.0.0:2379"
       - "ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379"
-      - "ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380"
-      - "ETCD_INITIAL_ADVERTISE_PEER_URLS=http://0.0.0.0:2380"
+      - "ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2378"
+      - "ETCD_INITIAL_ADVERTISE_PEER_URLS=http://0.0.0.0:2378"
       - "ALLOW_NONE_AUTHENTICATION=yes"
-      - "ETCD_INITIAL_CLUSTER=node1=http://0.0.0.0:2380"
+      - "ETCD_INITIAL_CLUSTER=node1=http://0.0.0.0:2378"
       - "ETCD_NAME=node1"
       - "ETCD_DATA_DIR=/opt/bitnami/etcd/data"
     ports:
-      - "2379:2379"
-      - "2380:2380"
+      - "2377:2379"
+      - "2378:2378"
     networks:
       webserver:
         ipv4_address: 172.18.238.8

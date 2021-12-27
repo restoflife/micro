@@ -4,7 +4,7 @@ addr = "0.0.0.0:1800"
 #调试模式
 mode = true
 #注册服务发现 etcd地址
-etcd = "http://127.0.0.1:2379"
+etcd = "http://127.0.0.1:2377"
 #./config/etcd.pem
 etcd_cert = ""
 #./config/etcd-key.pem
