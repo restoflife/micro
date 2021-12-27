@@ -30,29 +30,3 @@ func makeRegisterService(r *protocol.RegisterReq) error {
 	}
 	return nil
 }
-
-//func makeLoginService(r *protocol.LoginReq) (*protocol.LoginResp, error) {
-//	session, err := db.NewSession(constant.DbDefaultName)
-//	if err != nil {
-//		return nil, err
-//	}
-//	defer db.Close(session)
-//	resp, err := auth.NewAuthModel(session).LoginModel(r)
-//	if err != nil {
-//		log.Error(zap.Error(err))
-//		return nil, err
-//	}
-//	//签发token
-//	token, err := middleware.GenerateToken(&protocol.TokenClaims{
-//		Account: resp.Account,
-//		Ip:      r.Ip,
-//		Uid:     resp.Uid,
-//	})
-//	if err != nil {
-//		log.Error(zap.Error(err))
-//		return nil, err
-//	}
-//	resp.Token = token.Token
-//	resp.ExpireTime = token.ExpireTime
-//	return resp, nil
-//}

@@ -11,7 +11,8 @@ package order
 
 import (
 	"context"
-	"github.com/restoflife/micro/gateway/internal/component/grpccli/order"
+	"github.com/restoflife/micro/gateway/internal/component/grpccli"
+	"github.com/restoflife/micro/gateway/internal/constant"
 	"github.com/restoflife/micro/gateway/internal/protocol"
 	orderPb "github.com/restoflife/micro/protos/order"
 )
@@ -27,15 +28,7 @@ func NewOrderSvc() API {
 }
 
 func (o *IOrderAPI) OrderDetails(ctx context.Context, req *protocol.GetOrderDetailsReq) (*orderPb.GetOrderDetailsResp, error) {
-	resp, err := order.ExecHandler(order.GetOrderDetails, &orderPb.GetOrderDetailsReq{Id: req.Id})
-	if err != nil {
-		return nil, err
-	}
-	return resp.(*orderPb.GetOrderDetailsResp), nil
-}
-
-func getOrderDetails(id int64) (*orderPb.GetOrderDetailsResp, error) {
-	resp, err := order.ExecHandler(order.GetOrderDetails, &orderPb.GetOrderDetailsReq{Id: id})
+	resp, err := grpccli.ExecHandler(grpccli.InstancedMgr[constant.OrderPrefix], getOrderDetails, &orderPb.GetOrderDetailsReq{Id: req.Id})
 	if err != nil {
 		return nil, err
 	}

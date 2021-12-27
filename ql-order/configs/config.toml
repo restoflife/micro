@@ -3,9 +3,12 @@
 rpc_addr = "0.0.0.0:1600"
 #注册服务发现 etcd地址
 etcd = "http://127.0.0.1:2379"
-etcd_cert = ""#./config/etcd.pem
-etcd_key = "" #./config/etcd-key.pem
-etcd_ca_cert = "" #./config/etcd-ca.pem
+#./config/etcd.pem
+etcd_cert = ""
+#./config/etcd-key.pem
+etcd_key = ""
+#./config/etcd-ca.pem
+etcd_ca_cert = ""
 #注册服务发现 prefix服务目录
 prefix = "/services/order/"
 

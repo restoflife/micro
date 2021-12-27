@@ -23,3 +23,9 @@ const (
 	MB = 1024 * KB
 	GB = 1024 * MB
 )
+
+//grpc prefix
+const (
+	OrderPrefix = "order"
+	MpPrefix    = "mp"
+)

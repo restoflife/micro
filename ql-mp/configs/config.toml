@@ -7,13 +7,18 @@ mode = true
 rpc_addr = "0.0.0.0:1200"
 #注册服务发现 etcd地址
 etcd = "http://127.0.0.1:2379"
-etcd_cert = ""#./config/etcd.pem
-etcd_key = "" #./config/etcd-key.pem
-etcd_ca_cert = "" #./config/etcd-ca.pem
+#./config/etcd.pem
+etcd_cert = ""
+#./config/etcd-key.pem
+etcd_key = ""
+#./config/etcd-ca.pem
+etcd_ca_cert = ""
 #注册服务发现 prefix服务目录
 prefix = "/services/mp/"
+
+[grpc_cli.order]
 #订单服务发现
-order_prefix = "/services/order/"
+prefix = "/services/order/"
 
 #系统云行日志配置
 [runLog]
@@ -78,4 +83,4 @@ timeout = 36000
 #微信
 [wechat]
 appid = "wx5f9a1e460bce066d"
-secret = "b558937a10dca430220945bb3ae1aed0"
+secret = "b558937a10dca430220945bb3ae0"

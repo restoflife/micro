@@ -3,19 +3,22 @@
 addr = "0.0.0.0:1800"
 #调试模式
 mode = true
-#rpc 地址
-rpc_addr = "0.0.0.0:1700"
 #注册服务发现 etcd地址
 etcd = "http://127.0.0.1:2379"
-etcd_cert = ""#./config/etcd.pem
-etcd_key = "" #./config/etcd-key.pem
-etcd_ca_cert = "" #./config/etcd-ca.pem
-#注册服务发现 prefix服务目录
-prefix = "/services/gateway/"
+#./config/etcd.pem
+etcd_cert = ""
+#./config/etcd-key.pem
+etcd_key = ""
+#./config/etcd-ca.pem
+etcd_ca_cert = ""
+
+[grpc_cli.order]
 #订单服务发现
-order_prefix = "/services/order/"
+prefix = "/services/order/"
+[grpc_cli.mp]
 #小程序服务发现
-mp_prefix = "/services/mp/"
+prefix = "/services/mp/"
+
 
 #系统云行日志配置
 [runLog]

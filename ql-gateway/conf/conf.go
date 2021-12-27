@@ -19,10 +19,14 @@ type (
 		DB           map[string]*ConfigLite `toml:"db"`
 		Redis        *RedisConfig           `toml:"redis"`
 		Login        *login                 `toml:"login"`
+		GRpcCli      map[string]grpcCli     `toml:"grpc_cli"`
 	}
 )
 
 type (
+	grpcCli struct {
+		Prefix string `toml:"prefix"`
+	}
 	login struct {
 		Total   int    `toml:"total"`
 		Time    int    `toml:"time"`
@@ -57,16 +61,11 @@ type (
 	}
 
 	ServerConfig struct {
-		Addr        string `toml:"addr"`
-		Mode        bool   `toml:"mode"`
-		RPCAddr     string `toml:"rpc_addr"`
-		Etcd        string `toml:"etcd"`
-		EtcdCert    string `toml:"etcd_cert"`
-		EtcdKey     string `toml:"etcd_key"`
-		EtcdCaCert  string `toml:"etcd_ca_cert"`
-		Prefix      string `toml:"prefix"`
-		OrderPrefix string `toml:"order_prefix"`
-		MpPrefix    string `toml:"mp_prefix"`
-		LogPrefix   string `toml:"log_prefix"`
+		Addr       string `toml:"addr"`
+		Mode       bool   `toml:"mode"`
+		Etcd       string `toml:"etcd"`
+		EtcdCert   string `toml:"etcd_cert"`
+		EtcdKey    string `toml:"etcd_key"`
+		EtcdCaCert string `toml:"etcd_ca_cert"`
 	}
 )
