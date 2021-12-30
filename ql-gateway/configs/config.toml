@@ -63,7 +63,7 @@ dsn = "root:mysql@tcp(127.0.0.1:33066)/gateway?charset=utf8mb4&parseTime=True&lo
 [redis]
 network = "tcp"
 # len >1 为集群模式否则为单机模式
-addr = ["127.0.0.1:6378"]
+addr = ["127.0.0.1:6379"]
 #redis数据库编号0-15取值
 db = 5
 #密码

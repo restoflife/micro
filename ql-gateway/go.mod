@@ -7,7 +7,6 @@ require (
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.7.7
 	github.com/go-kit/kit v0.12.0
-	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/mattn/go-isatty v0.0.14
 	github.com/spf13/cobra v1.3.0
 	github.com/spf13/viper v1.10.0
@@ -27,8 +26,10 @@ require (
 	github.com/google/uuid v1.1.2
 	github.com/mitchellh/mapstructure v1.4.3
 	github.com/mojocn/base64Captcha v1.3.5
+	github.com/olivere/elastic/v7 v7.0.30
 	github.com/restoflife/micro/protos v1.1.0
 	github.com/satori/go.uuid v1.2.0
+	github.com/sereiner/library v0.0.0-20200518095232-1fa3e640cc5f
 	github.com/sony/sonyflake v1.0.0
 	github.com/tidwall/gjson v1.12.1
 	go.etcd.io/etcd/client/v3 v3.5.1 // indirect

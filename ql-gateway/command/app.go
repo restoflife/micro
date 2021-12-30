@@ -19,6 +19,7 @@ import (
 	"github.com/restoflife/micro/gateway/conf"
 	"github.com/restoflife/micro/gateway/internal/app"
 	"github.com/restoflife/micro/gateway/internal/component/db"
+	"github.com/restoflife/micro/gateway/internal/component/elasticsearch"
 	"github.com/restoflife/micro/gateway/internal/component/grpccli"
 	"github.com/restoflife/micro/gateway/internal/component/log"
 	"github.com/restoflife/micro/gateway/internal/component/redis"
@@ -71,6 +72,11 @@ func (m *mainApp) BootUpPrepare() {
 
 	log.Infox("grpc client initialized...")
 	if err := grpccli.MustBootUp(); err != nil {
+		log.Panic(zap.Error(err))
+	}
+
+	log.Infox("elasticsearch client initialized...")
+	if err := elasticsearch.NewElasticSearchClient(); err != nil {
 		log.Panic(zap.Error(err))
 	}
 }

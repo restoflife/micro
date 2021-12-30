@@ -21,6 +21,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"reflect"
 	"strings"
 	"time"
 )
@@ -139,4 +140,18 @@ func PageIndex(page, pageSize int) (limit, offset int) {
 	offset = (page - 1) * pageSize
 	limit = pageSize
 	return
+}
+
+// DeleteSlice 删除切片index
+func DeleteSlice(slice interface{}, index int) (interface{}, error) {
+	sliceValue := reflect.ValueOf(slice)
+	length := sliceValue.Len()
+	if slice == nil || length == 0 || (length-1) < index {
+		return nil, fmt.Errorf("error deleting slice")
+	}
+	if length-1 == index {
+		return sliceValue.Slice(0, index).Interface(), nil
+	}
+
+	return reflect.AppendSlice(sliceValue.Slice(0, index), sliceValue.Slice(index+1, length)).Interface(), nil
 }
