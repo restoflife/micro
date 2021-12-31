@@ -81,3 +81,18 @@ total = 5
 time = 600
 key = "9c585bc02b29f7718f6d15cab687ac19"
 timeout = 36000
+
+#elasticsearch配置
+[elastic]
+#主机地址
+host = "http://42.192.116.58:9200"
+#用户名
+username = "elastic"
+#密码
+password = "123456"
+#是否开启集群嗅探
+sniff = false
+#设置两次运行状况检查之间的间隔
+heal = 10
+#启用或禁用gzip压缩
+gzip = false

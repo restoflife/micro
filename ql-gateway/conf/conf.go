@@ -20,10 +20,19 @@ type (
 		Redis        *RedisConfig           `toml:"redis"`
 		Login        *login                 `toml:"login"`
 		GRpcCli      map[string]grpcCli     `toml:"grpc_cli"`
+		Elastic      *ElasticConfig         `toml:"elastic"`
 	}
 )
 
 type (
+	ElasticConfig struct {
+		Host     string `json:"host"`
+		Username string `json:"username"`
+		Password string `json:"password"`
+		Sniff    bool   `json:"sniff"`
+		Heal     int    `json:"heal"`
+		Gzip     bool   `json:"gzip"`
+	}
 	grpcCli struct {
 		Prefix string `toml:"prefix"`
 	}

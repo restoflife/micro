@@ -76,7 +76,7 @@ func (m *mainApp) BootUpPrepare() {
 	}
 
 	log.Infox("elasticsearch client initialized...")
-	if err := elasticsearch.NewElasticSearchClient(); err != nil {
+	if err := elasticsearch.NewElasticSearchClient(conf.C.Elastic); err != nil {
 		log.Panic(zap.Error(err))
 	}
 }
