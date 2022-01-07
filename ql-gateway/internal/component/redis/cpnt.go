@@ -22,13 +22,17 @@ import (
 
 var (
 	ctx   = context.Background()
-	Cli   redis.UniversalClient
+	cli   redis.UniversalClient
 	lockG = &singleflight.Group{}
 )
 
+func GetClient() redis.UniversalClient {
+	return cli
+}
+
 // MustBootUp Start redis
 func MustBootUp(config *conf.RedisConfig) error {
-	Cli = redis.NewUniversalClient(&redis.UniversalOptions{
+	cli = redis.NewUniversalClient(&redis.UniversalOptions{
 		Addrs:        config.Addr,
 		DB:           config.DB,
 		Password:     config.Password,
@@ -36,7 +40,7 @@ func MustBootUp(config *conf.RedisConfig) error {
 		PoolSize:     config.PoolSize,
 		MinIdleConns: config.IdleSize,
 	})
-	_, err := Cli.Ping(ctx).Result()
+	_, err := cli.Ping(ctx).Result()
 	if err != nil {
 		return err
 	}
@@ -51,7 +55,7 @@ func SetCache(key string, data interface{}, duration time.Duration) error {
 	if err != nil {
 		return err
 	}
-	return Cli.Set(ctx, key, jsonData, duration).Err()
+	return cli.Set(ctx, key, jsonData, duration).Err()
 }
 
 func CheckCache(key string, fn func() (interface{}, error), duration time.Duration, needCache bool) (interface{}, error) {
@@ -75,7 +79,7 @@ func CheckCache(key string, fn func() (interface{}, error), duration time.Durati
 
 func GetCache(key string) (interface{}, error) {
 	key = utils.MD5String(key)
-	data, err := Cli.Get(ctx, key).Result()
+	data, err := cli.Get(ctx, key).Result()
 	if err == nil && data != "" {
 		dom := gjson.Parse(data)
 		return dom.Get("data").Value(), err
@@ -86,7 +90,7 @@ func GetCache(key string) (interface{}, error) {
 
 func GetCacheByFloat(key string) (float64, error) {
 	key = utils.MD5String(key)
-	data, err := Cli.Get(ctx, key).Result()
+	data, err := cli.Get(ctx, key).Result()
 	if err == nil && data != "" {
 		dom := gjson.Parse(data)
 		return dom.Get("data").Num, err
@@ -98,7 +102,7 @@ func GetCacheByFloat(key string) (float64, error) {
 // GetRedisExpTime Expiration time
 func GetRedisExpTime(key string) (time.Duration, error) {
 	key = utils.MD5String(key)
-	data, err := Cli.TTL(ctx, key).Result()
+	data, err := cli.TTL(ctx, key).Result()
 	if err != nil {
 		return 0, err
 	}
@@ -114,17 +118,17 @@ func DelCache(key ...string) error {
 			keys = append(keys, utils.MD5String(v))
 		}
 	}
-	return Cli.Del(ctx, keys...).Err()
+	return cli.Del(ctx, keys...).Err()
 }
 
 // DepositZIncrBy Write Leaderboard
 func DepositZIncrBy(key string, z *redis.Z) error {
 	key = utils.MD5String(key)
-	return Cli.ZIncrBy(ctx, key, z.Score, z.Member.(string)).Err()
+	return cli.ZIncrBy(ctx, key, z.Score, z.Member.(string)).Err()
 }
 
 // GetDepositByRedis Query Leaderboard
 func GetDepositByRedis(key string, start, stop int64) ([]redis.Z, error) {
 	key = utils.MD5String(key)
-	return Cli.ZRevRangeWithScores(ctx, key, start, stop).Result()
+	return cli.ZRevRangeWithScores(ctx, key, start, stop).Result()
 }

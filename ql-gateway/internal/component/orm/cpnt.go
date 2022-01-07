@@ -72,14 +72,12 @@ func MustBootUp(configs map[string]*conf.ConfigLite, opts ...Option) error {
 				SkipDefaultTransaction: true,
 			})
 		if err != nil {
-			log.Error(zap.Error(err))
 			return err
 		}
 
 		db = db.Debug()
 		DB, err := db.DB()
 		if err != nil {
-			log.Error(zap.Error(err))
 			return err
 		}
 		if config.MaxIdle > 0 {
