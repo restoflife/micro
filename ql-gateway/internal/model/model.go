@@ -11,6 +11,7 @@ package model
 
 import (
 	"github.com/restoflife/micro/gateway/internal/constant"
+	"gorm.io/gorm"
 	"time"
 	"xorm.io/xorm"
 )
@@ -37,7 +38,8 @@ type Account struct {
 func (m *Account) TableName() string {
 	return "account"
 }
-func Sync(name string, group *xorm.EngineGroup) error {
+
+func SyncXorm(name string, group *xorm.EngineGroup) error {
 	switch name {
 	case constant.DbDefaultName:
 		return group.StoreEngine("InnoDB").Sync2(
@@ -45,5 +47,13 @@ func Sync(name string, group *xorm.EngineGroup) error {
 		)
 	}
 
+	return nil
+}
+
+func SyncGorm(name string, group *gorm.DB) error {
+	switch name {
+	case constant.DbDefaultName:
+		return group.AutoMigrate()
+	}
 	return nil
 }

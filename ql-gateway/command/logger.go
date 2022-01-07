@@ -195,7 +195,7 @@ func LoggerWithConfig(logger *zap.Logger, conf LoggerConfig) gin.HandlerFunc {
 			param.Path = path
 			if param.ErrorMessage == "" {
 				Ip := utils.ClientIp(c.Request)
-				logger.Info("GIN",
+				logger.Info("[GIN]",
 					zap.String("Path", path),
 					zap.Int("Code", param.StatusCode),
 					zap.String("Method", param.Method),

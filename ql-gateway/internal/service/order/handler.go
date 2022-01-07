@@ -28,7 +28,11 @@ func NewOrderSvc() API {
 }
 
 func (o *IOrderAPI) OrderDetails(ctx context.Context, req *protocol.GetOrderDetailsReq) (*orderPb.GetOrderDetailsResp, error) {
-	resp, err := grpccli.ExecHandler(grpccli.InstancedMgr[constant.OrderPrefix], getOrderDetails, &orderPb.GetOrderDetailsReq{Id: req.Id})
+	resp, err := grpccli.ExecHandler(grpccli.InstancedMgr[constant.OrderPrefix],
+		getOrderDetails,
+		&orderPb.GetOrderDetailsReq{
+			Id: req.Id,
+		})
 	if err != nil {
 		return nil, err
 	}

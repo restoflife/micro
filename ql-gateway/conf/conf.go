@@ -51,6 +51,9 @@ type (
 		Slave   []struct {
 			Dsn string `toml:"dsn"`
 		}
+		Prefix   string `toml:"prefix"`
+		Singular bool   `toml:"singular"`
+		MaxLife  int    `toml:"max_life"`
 	}
 	RedisConfig struct {
 		Addr       []string `toml:"addr"`

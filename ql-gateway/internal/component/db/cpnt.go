@@ -20,9 +20,9 @@ import (
 	"xorm.io/xorm/log"
 )
 
-var ormMgr = map[string]*xorm.EngineGroup{}
+var dbMgr = map[string]*xorm.EngineGroup{}
 
-// MustBootUp Start database
+// MustBootUp Start database by xorm
 func MustBootUp(configs map[string]*conf.ConfigLite, opts ...Option) error {
 	options := newOptions(opts...)
 	for name, config := range configs {
@@ -54,22 +54,22 @@ func MustBootUp(configs map[string]*conf.ConfigLite, opts ...Option) error {
 		if config.MaxOpen > 0 {
 			db.SetMaxOpenConns(config.MaxOpen)
 		}
-		if _, ok := ormMgr[name]; ok {
+		if _, ok := dbMgr[name]; ok {
 			return fmt.Errorf("database components loaded twice：[%s]", name)
 		}
-		if options.sync2 != nil {
-			if err = options.sync2(name, db); err != nil {
+		if options.syncXorm != nil {
+			if err = options.syncXorm(name, db); err != nil {
 				return err
 			}
 		}
-		ormMgr[name] = db
+		dbMgr[name] = db
 	}
 	go func() {
 		ticker := time.NewTicker(time.Minute * 10)
 		for {
 			select {
 			case <-ticker.C:
-				for _, v := range ormMgr {
+				for _, v := range dbMgr {
 					if err := v.Ping(); err != nil {
 						l.Error(zap.Error(err))
 					}
@@ -104,7 +104,7 @@ func NewSession(name string) (*xorm.Session, error) {
 	}
 }
 func get(name string) (*xorm.EngineGroup, error) {
-	g, ok := ormMgr[name]
+	g, ok := dbMgr[name]
 	if !ok {
 		l.Error(zap.Error(fmt.Errorf("database does not exist:[%s]", name)))
 		return nil, fmt.Errorf("database does not exist:[%s]", name)

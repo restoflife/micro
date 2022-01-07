@@ -53,8 +53,16 @@ dsn = "root:mysql@tcp(127.0.0.1:33066)/gateway?charset=utf8mb4&parseTime=True&lo
 max_idle = 10
 #最大打开连接数
 max_open = 30
+#最大生存时间(ms)
+max_life = 100
 #是否显示SQL
 show_sql = true
+#表名前缀
+prefix = ""
+#单数表名
+singular = true
+#日志等级(gorm)
+level = "info"
 #从
 [[db.default.slave]]
 dsn = "root:mysql@tcp(127.0.0.1:33066)/gateway?charset=utf8mb4&parseTime=True&loc=Local"
@@ -85,7 +93,7 @@ timeout = 36000
 #elasticsearch配置
 [elastic]
 #主机地址
-host = "http://42.192.116.58:9200"
+host = "http://127.0.0.1:9200"
 #用户名
 username = "elastic"
 #密码

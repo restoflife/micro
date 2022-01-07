@@ -19,9 +19,9 @@ import (
 	"github.com/restoflife/micro/gateway/conf"
 	"github.com/restoflife/micro/gateway/internal/app"
 	"github.com/restoflife/micro/gateway/internal/component/db"
-	"github.com/restoflife/micro/gateway/internal/component/elasticsearch"
 	"github.com/restoflife/micro/gateway/internal/component/grpccli"
 	"github.com/restoflife/micro/gateway/internal/component/log"
+	"github.com/restoflife/micro/gateway/internal/component/orm"
 	"github.com/restoflife/micro/gateway/internal/component/redis"
 	"github.com/restoflife/micro/gateway/internal/model"
 	"github.com/restoflife/micro/gateway/router"
@@ -61,7 +61,11 @@ func (m *mainApp) InitConfig() {
 
 func (m *mainApp) BootUpPrepare() {
 	log.Infox("initialize xorm connection to database....")
-	if err := db.MustBootUp(conf.C.DB, db.SetSync2Func(model.Sync)); err != nil {
+	if err := db.MustBootUp(conf.C.DB, db.SetSyncXormFunc(model.SyncXorm)); err != nil {
+		log.Panic(zap.Error(err))
+	}
+	log.Infox("initialize gorm connection to database....")
+	if err := orm.MustBootUp(conf.C.DB, orm.SetSyncGormFunc(model.SyncGorm)); err != nil {
 		log.Panic(zap.Error(err))
 	}
 
@@ -75,10 +79,10 @@ func (m *mainApp) BootUpPrepare() {
 		log.Panic(zap.Error(err))
 	}
 
-	log.Infox("elasticsearch client initialized...")
-	if err := elasticsearch.NewElasticSearchClient(conf.C.Elastic); err != nil {
-		log.Panic(zap.Error(err))
-	}
+	//log.Infox("elasticsearch client initialized...")
+	//if err := elasticsearch.NewElasticSearchClient(conf.C.Elastic); err != nil {
+	//	log.Panic(zap.Error(err))
+	//}
 }
 func (m *mainApp) BootUpServer() {
 	go httpServer()
