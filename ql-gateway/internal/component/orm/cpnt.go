@@ -23,8 +23,9 @@ import (
 )
 
 var (
-	ormMgr = map[string]*gorm.DB{}
-	l      dbLog
+	ormMgr    = map[string]*gorm.DB{}
+	l         dbLog
+	newLogger logger.Interface
 )
 
 type LogLevel int
@@ -51,11 +52,12 @@ func MustBootUp(configs map[string]*conf.ConfigLite, opts ...Option) error {
 			l.LogLevel = logger.Info
 		}
 
-		newLogger := logger.New(
+		newLogger = logger.New(
 			l,
 			logger.Config{
-				SlowThreshold: time.Millisecond * 300,
-				LogLevel:      l.LogLevel,
+				SlowThreshold:             time.Millisecond * 300,
+				LogLevel:                  l.LogLevel,
+				IgnoreRecordNotFoundError: true, //忽略ErrRecordNotFound（记录未找到）错误
 			},
 		)
 		db, err := gorm.Open(
@@ -149,7 +151,7 @@ func (l dbLog) Printf(msg string, data ...interface{}) {
 
 func NewSession(name string) (*gorm.DB, error) {
 	if g, e := get(name); e == nil {
-		return g /*.WithContext(context.Background())*/, nil
+		return g.Session(&gorm.Session{Logger: newLogger}) /*g.WithContext(context.Background())*/, nil
 	} else {
 		return nil, e
 	}
