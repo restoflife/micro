@@ -53,7 +53,9 @@ func SyncXorm(name string, group *xorm.EngineGroup) error {
 func SyncGorm(name string, group *gorm.DB) error {
 	switch name {
 	case constant.DbDefaultName:
-		return group.AutoMigrate()
+		return group.AutoMigrate(
+			new(Account),
+		)
 	}
 	return nil
 }

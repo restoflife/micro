@@ -62,11 +62,13 @@ func (m *mainApp) InitConfig() {
 func (m *mainApp) BootUpPrepare() {
 
 	log.Infox("initialize xorm connection to database....")
+	//todo ::db.SetSyncXormFunc(model.SyncXorm) 生产环境不建议开启
 	if err := db.MustBootUp(conf.C.DB, db.SetSyncXormFunc(model.SyncXorm)); err != nil {
 		log.Panic(zap.Error(err))
 	}
 
 	log.Infox("initialize gorm connection to database....")
+	//todo ::orm.SetSyncGormFunc(model.SyncGorm) 生产环境不建议开启
 	if err := orm.MustBootUp(conf.C.DB, orm.SetSyncGormFunc(model.SyncGorm)); err != nil {
 		log.Panic(zap.Error(err))
 	}
@@ -100,6 +102,7 @@ func (m *mainApp) Run() {
 			defer cancel()
 			if err := srv.Shutdown(ctx); err != nil {
 				log.Error(zap.Any("Server Shutdown:", zap.Error(err)))
+				return err
 			}
 			return fmt.Errorf("received signal %s", sig)
 		}
