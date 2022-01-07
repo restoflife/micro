@@ -113,8 +113,7 @@ func get(name string) (*xorm.EngineGroup, error) {
 }
 
 func Close(session *xorm.Session) {
-	err := session.Close()
-	if err != nil {
+	if err := session.Close(); err != nil {
 		l.Error(zap.Error(err))
 		return
 	}

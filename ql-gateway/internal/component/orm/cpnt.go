@@ -158,8 +158,7 @@ func NewSession(name string) (*gorm.DB, error) {
 }
 
 func Close(tx *sql.DB) {
-	err := tx.Close()
-	if err != nil {
+	if err := tx.Close(); err != nil {
 		log.Error(zap.Error(err))
 		return
 	}
