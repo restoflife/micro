@@ -19,6 +19,7 @@ import (
 	"github.com/restoflife/micro/gateway/conf"
 	"github.com/restoflife/micro/gateway/internal/app"
 	"github.com/restoflife/micro/gateway/internal/component/db"
+	"github.com/restoflife/micro/gateway/internal/component/elasticsearch"
 	"github.com/restoflife/micro/gateway/internal/component/grpccli"
 	"github.com/restoflife/micro/gateway/internal/component/log"
 	"github.com/restoflife/micro/gateway/internal/component/orm"
@@ -61,6 +62,21 @@ func (m *mainApp) InitConfig() {
 
 func (m *mainApp) BootUpPrepare() {
 
+	log.Infox("initialize connection to redis...")
+	if err := redis.MustBootUp(conf.C.Redis); err != nil {
+		log.Panic(zap.Error(err))
+	}
+
+	log.Infox("grpc client initialized...")
+	if err := grpccli.MustBootUp(); err != nil {
+		log.Panic(zap.Error(err))
+	}
+
+	log.Infox("elasticsearch client initialized...")
+	if err := elasticsearch.NewElasticSearchClient(conf.C.Elastic); err != nil {
+		log.Panic(zap.Error(err))
+	}
+
 	log.Infox("initialize xorm connection to database....")
 	//TODO ::db.SetSyncXormFunc(model.SyncXorm) 生产环境不建议开启
 	if err := db.MustBootUp(conf.C.DB, db.SetSyncXormFunc(model.SyncXorm)); err != nil {
@@ -73,20 +89,6 @@ func (m *mainApp) BootUpPrepare() {
 		log.Panic(zap.Error(err))
 	}
 
-	log.Infox("initialize connection to redis...")
-	if err := redis.MustBootUp(conf.C.Redis); err != nil {
-		log.Panic(zap.Error(err))
-	}
-
-	log.Infox("grpc client initialized...")
-	if err := grpccli.MustBootUp(); err != nil {
-		log.Panic(zap.Error(err))
-	}
-
-	//log.Infox("elasticsearch client initialized...")
-	//if err := elasticsearch.NewElasticSearchClient(conf.C.Elastic); err != nil {
-	//	log.Panic(zap.Error(err))
-	//}
 }
 func (m *mainApp) BootUpServer() {
 	go httpServer()

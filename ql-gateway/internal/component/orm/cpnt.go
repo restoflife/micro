@@ -75,7 +75,9 @@ func MustBootUp(configs map[string]*conf.ConfigLite, opts ...Option) error {
 			return err
 		}
 
-		db = db.Debug()
+		if config.ShowSql {
+			db = db.Debug()
+		}
 		DB, err := db.DB()
 		if err != nil {
 			return err
