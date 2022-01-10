@@ -56,7 +56,7 @@ max_open = 30
 #最大生存时间(ms)
 max_life = 100
 #是否显示SQL
-show_sql = true
+show_sql = false
 #表名前缀
 prefix = ""
 #单数表名

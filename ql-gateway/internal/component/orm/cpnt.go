@@ -46,10 +46,10 @@ type dbLog struct {
 func MustBootUp(configs map[string]*conf.ConfigLite, opts ...Option) error {
 	options := newOptions(opts...)
 	for name, config := range configs {
-		l.LogLevel = logger.Error
+		l.LogLevel = logger.Info
 
 		if config.ShowSql {
-			l.LogLevel = logger.Info
+			l.LogLevel = logger.Error
 		}
 
 		newLogger = logger.New(
