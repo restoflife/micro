@@ -10,7 +10,7 @@ require (
 	github.com/mattn/go-isatty v0.0.14
 	github.com/spf13/cobra v1.3.0
 	github.com/spf13/viper v1.10.0
-	go.uber.org/zap v1.19.1
+	go.uber.org/zap v1.20.0
 	google.golang.org/grpc v1.43.0
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 )
@@ -24,6 +24,7 @@ require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/uuid v1.1.2
+	github.com/jinzhu/now v1.1.4 // indirect
 	github.com/mitchellh/mapstructure v1.4.3
 	github.com/mojocn/base64Captcha v1.3.5
 	github.com/olivere/elastic/v7 v7.0.30
@@ -39,6 +40,7 @@ require (
 	gorm.io/driver/mysql v1.2.3
 	gorm.io/gorm v1.22.4
 	gorm.io/plugin/dbresolver v1.1.0
+	moul.io/zapgorm2 v1.1.1 // indirect
 	xorm.io/builder v0.3.9
 	xorm.io/xorm v1.2.5
 )

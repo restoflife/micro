@@ -24,7 +24,6 @@ import (
 
 var (
 	ormMgr    = map[string]*gorm.DB{}
-	l         dbLog
 	newLogger logger.Interface
 )
 
@@ -37,34 +36,19 @@ const (
 	Info
 )
 
-type dbLog struct {
-	logger.Writer
-	logger.Config
-}
-
 //MustBootUp Start database by gorm
 func MustBootUp(configs map[string]*conf.ConfigLite, opts ...Option) error {
+	sqlLog, _ := log.NewLogger(conf.C.SQLLogCfg)
+	lg := New(sqlLog)
+	lg.SetAsDefault()
 	options := newOptions(opts...)
 	for name, config := range configs {
-		l.LogLevel = logger.Info
-
-		if config.ShowSql {
-			l.LogLevel = logger.Error
-		}
-
-		newLogger = logger.New(
-			l,
-			logger.Config{
-				SlowThreshold:             time.Millisecond * 300,
-				LogLevel:                  l.LogLevel,
-				IgnoreRecordNotFoundError: true, //忽略ErrRecordNotFound（记录未找到）错误
-			},
-		)
 		db, err := gorm.Open(
 			mysql.New(
 				mysql.Config{
 					DSN: config.Dsn,
-				}), &gorm.Config{Logger: newLogger,
+				}), &gorm.Config{
+				Logger: lg,
 				NamingStrategy: schema.NamingStrategy{
 					TablePrefix:   config.Prefix,
 					SingularTable: config.Singular,
@@ -137,16 +121,6 @@ func ConvertLevel(level string) logger.LogLevel {
 	}
 
 	return logger.Silent
-}
-
-func (l dbLog) Printf(msg string, data ...interface{}) {
-	lg := log.Logger()
-	if l.LogLevel >= logger.Info {
-		lg.Info("[GORM]", zap.String("info", fmt.Sprintf(msg, data...)))
-	}
-	if l.LogLevel < logger.Info {
-		lg.Error("[GORM]", zap.String("error", fmt.Sprintf(msg, data...)))
-	}
 }
 
 func NewSession(name string) (*gorm.DB, error) {

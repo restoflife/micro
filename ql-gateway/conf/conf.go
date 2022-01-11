@@ -16,6 +16,7 @@ type (
 		ServerCfg    *ServerConfig          `toml:"server"`
 		RunLogCfg    *LogConfig             `toml:"runLog"`
 		AccessLogCfg *LogConfig             `toml:"accessLog"`
+		SQLLogCfg    *LogConfig             `toml:"sqlLog"`
 		DB           map[string]*ConfigLite `toml:"db"`
 		Redis        *RedisConfig           `toml:"redis"`
 		Login        *login                 `toml:"login"`

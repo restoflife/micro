@@ -25,6 +25,10 @@ var dbMgr = map[string]*xorm.EngineGroup{}
 // MustBootUp Start database by xorm
 func MustBootUp(configs map[string]*conf.ConfigLite, opts ...Option) error {
 	options := newOptions(opts...)
+	sqlLog, err := l.NewLogger(conf.C.SQLLogCfg)
+	if err != nil {
+		return err
+	}
 	for name, config := range configs {
 		master, err := xorm.NewEngine(config.Driver, config.Dsn)
 		if err != nil {
@@ -43,8 +47,9 @@ func MustBootUp(configs map[string]*conf.ConfigLite, opts ...Option) error {
 		if err != nil {
 			return err
 		}
-		db.ShowSQL(config.ShowSql)
 		db.Logger().SetLevel(log.LOG_ERR)
+		db.SetLogger(New(sqlLog))
+		db.ShowSQL(config.ShowSql)
 		if config.ShowSql {
 			db.Logger().SetLevel(log.LOG_INFO)
 		}
