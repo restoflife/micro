@@ -54,7 +54,7 @@ func SyncGorm(name string, group *gorm.DB) error {
 	switch name {
 	case constant.DbDefaultName:
 		return group.AutoMigrate(
-			new(Account),
+		//new(Account),
 		)
 	}
 	return nil

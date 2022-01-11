@@ -12,6 +12,7 @@ package orm
 import (
 	"database/sql"
 	"fmt"
+	ormLog "github.com/restoflife/log"
 	"github.com/restoflife/micro/gateway/conf"
 	"github.com/restoflife/micro/gateway/internal/component/log"
 	"go.uber.org/zap"
@@ -38,8 +39,11 @@ const (
 
 //MustBootUp Start database by gorm
 func MustBootUp(configs map[string]*conf.ConfigLite, opts ...Option) error {
-	sqlLog, _ := log.NewLogger(conf.C.SQLLogCfg)
-	lg := New(sqlLog)
+	sqlLog, err := log.NewLogger(conf.C.SQLLogCfg)
+	if err != nil {
+		return err
+	}
+	lg := ormLog.NewGormLogger(sqlLog)
 	lg.SetAsDefault()
 	options := newOptions(opts...)
 	for name, config := range configs {

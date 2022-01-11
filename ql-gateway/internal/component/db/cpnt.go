@@ -12,12 +12,13 @@ package db
 import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
+	ormLog "github.com/restoflife/log"
 	"github.com/restoflife/micro/gateway/conf"
 	l "github.com/restoflife/micro/gateway/internal/component/log"
 	"go.uber.org/zap"
 	"time"
 	"xorm.io/xorm"
-	"xorm.io/xorm/log"
+	xlog "xorm.io/xorm/log"
 )
 
 var dbMgr = map[string]*xorm.EngineGroup{}
@@ -47,11 +48,11 @@ func MustBootUp(configs map[string]*conf.ConfigLite, opts ...Option) error {
 		if err != nil {
 			return err
 		}
-		db.Logger().SetLevel(log.LOG_ERR)
-		db.SetLogger(New(sqlLog))
+		db.Logger().SetLevel(xlog.LOG_ERR)
+		db.SetLogger(ormLog.NewXormLogger(sqlLog))
 		db.ShowSQL(config.ShowSql)
 		if config.ShowSql {
-			db.Logger().SetLevel(log.LOG_INFO)
+			db.Logger().SetLevel(xlog.LOG_INFO)
 		}
 		if config.MaxIdle > 0 {
 			db.SetMaxIdleConns(config.MaxIdle)
