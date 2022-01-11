@@ -103,7 +103,7 @@ func MustBootUp(configs map[string]*conf.ConfigLite, opts ...Option) error {
 							log.Error(zap.Error(err))
 						}
 					}
-					log.Infox("[gorm]", zap.String("mysql", "PING DATABASE BY GORM"))
+					log.Infox(fmt.Sprintf("%s  %s", "[GORM]", "PING DATABASE mysql"))
 				}
 			}
 		}

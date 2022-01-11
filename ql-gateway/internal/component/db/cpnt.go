@@ -60,6 +60,9 @@ func MustBootUp(configs map[string]*conf.ConfigLite, opts ...Option) error {
 		if config.MaxOpen > 0 {
 			db.SetMaxOpenConns(config.MaxOpen)
 		}
+		if config.MaxLife > 0 {
+			db.SetConnMaxLifetime(time.Millisecond * time.Duration(config.MaxLife))
+		}
 		if _, ok := dbMgr[name]; ok {
 			return fmt.Errorf("database components loaded twice：[%s]", name)
 		}
