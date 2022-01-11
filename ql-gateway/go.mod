@@ -28,7 +28,7 @@ require (
 	github.com/mitchellh/mapstructure v1.4.3
 	github.com/mojocn/base64Captcha v1.3.5
 	github.com/olivere/elastic/v7 v7.0.30
-	github.com/restoflife/log v1.9.7 // indirect
+	github.com/restoflife/log v1.9.7
 	github.com/restoflife/micro/protos v1.1.0
 	github.com/satori/go.uuid v1.2.0
 	github.com/sony/sonyflake v1.0.0
@@ -40,8 +40,6 @@ require (
 	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
 	gorm.io/driver/mysql v1.2.3
 	gorm.io/gorm v1.22.4
-	gorm.io/plugin/dbresolver v1.1.0
-	moul.io/zapgorm2 v1.1.1 // indirect
 	xorm.io/builder v0.3.9
 	xorm.io/xorm v1.2.5
 )

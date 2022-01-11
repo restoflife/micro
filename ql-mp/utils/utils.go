@@ -122,7 +122,11 @@ func Get(url string) (int, []byte) {
 		log.Error(zap.Error(err))
 		return http.StatusInternalServerError, nil
 	}
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		if err = Body.Close(); err != nil {
+			log.Error(zap.Error(err))
+		}
+	}(resp.Body)
 	var buffer [512]byte
 	result := bytes.NewBuffer(nil)
 	for {

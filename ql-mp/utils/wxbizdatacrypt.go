@@ -82,7 +82,8 @@ func (wxCrypt *WxBizDataCrypt) Decrypt(encryptedData string, iv string, isJSON b
 
 	var decrypted map[string]interface{}
 
-	re := regexp.MustCompile(`[^\{]*(\{.*\})[^\}]*`)
+	re := regexp.MustCompile(`[^{]*({.*})[^}]*`)
+	//re := regexp.MustCompile(`[^\{]*(\{.*\})[^\}]*`)
 	aesPlantText = []byte(re.ReplaceAllString(string(aesPlantText), "$1"))
 	err = json.Unmarshal(aesPlantText, &decrypted)
 	if err != nil {
