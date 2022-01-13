@@ -48,6 +48,7 @@ func MustBootUp(configs map[string]*conf.ConfigLite, opts ...Option) error {
 				SingularTable: config.Singular,
 			},
 			SkipDefaultTransaction: true,
+			QueryFields:            true,
 		})
 		if err != nil {
 			return err
