@@ -26,4 +26,6 @@ var RootCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(versionCmd)
 	RootCmd.Flags().String("c", "configs/config.toml", "the path to the config file")
+	// 配置文件过多 可进行拆分文件存放读取
+	//RootCmd.Flags().String("s", "configs/config.d.toml", "the path to the config file")
 }
