@@ -10,7 +10,6 @@
 package orm
 
 import (
-	"database/sql"
 	"fmt"
 	ormLog "github.com/restoflife/log"
 	"github.com/restoflife/micro/gateway/conf"
@@ -18,24 +17,12 @@ import (
 	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
+	"gorm.io/plugin/dbresolver"
 	"time"
 )
 
-var (
-	ormMgr    = map[string]*gorm.DB{}
-	newLogger logger.Interface
-)
-
-type LogLevel int
-
-const (
-	Silent LogLevel = iota + 1
-	Error
-	Warn
-	Info
-)
+var ormMgr = map[string]*gorm.DB{}
 
 //MustBootUp Start database by gorm
 func MustBootUp(configs map[string]*conf.ConfigLite, opts ...Option) error {
@@ -47,38 +34,45 @@ func MustBootUp(configs map[string]*conf.ConfigLite, opts ...Option) error {
 	lg.SetAsDefault()
 	options := newOptions(opts...)
 	for name, config := range configs {
-		db, err := gorm.Open(
-			mysql.New(
-				mysql.Config{
-					DSN: config.Dsn,
-				}), &gorm.Config{
-				Logger: lg,
-				NamingStrategy: schema.NamingStrategy{
-					TablePrefix:   config.Prefix,
-					SingularTable: config.Singular,
-				},
-				SkipDefaultTransaction: true,
-			})
+		master := mysql.Open(config.Dsn)
+		slaves := make([]gorm.Dialector, len(config.Slave))
+		for i, s := range config.Slave {
+			slave := mysql.Open(s.Dsn)
+			slaves[i] = slave
+		}
+
+		db, err := gorm.Open(master, &gorm.Config{
+			Logger: lg,
+			NamingStrategy: schema.NamingStrategy{
+				TablePrefix:   config.Prefix,
+				SingularTable: config.Singular,
+			},
+			SkipDefaultTransaction: true,
+		})
 		if err != nil {
 			return err
 		}
-
+		plugin := dbresolver.Register(dbresolver.Config{
+			Sources:  []gorm.Dialector{master},
+			Replicas: slaves,
+			Policy:   dbresolver.RandomPolicy{},
+		})
+		if config.MaxIdle > 0 {
+			plugin.SetMaxIdleConns(config.MaxIdle)
+		}
+		if config.MaxOpen > 0 {
+			plugin.SetMaxOpenConns(config.MaxOpen)
+		}
+		if config.MaxLife > 0 {
+			plugin.SetConnMaxLifetime(time.Millisecond * time.Duration(config.MaxLife))
+		}
 		if config.ShowSql {
 			db = db.Debug()
 		}
-		DB, err := db.DB()
-		if err != nil {
+		if err = db.Use(plugin); err != nil {
 			return err
 		}
-		if config.MaxIdle > 0 {
-			DB.SetMaxIdleConns(config.MaxIdle)
-		}
-		if config.MaxOpen > 0 {
-			DB.SetMaxOpenConns(config.MaxOpen)
-		}
-		if config.MaxLife > 0 {
-			DB.SetConnMaxLifetime(time.Millisecond * time.Duration(config.MaxLife))
-		}
+
 		if _, ok := ormMgr[name]; ok {
 			return fmt.Errorf("database components loaded twice：[%s]", name)
 		}
@@ -88,7 +82,6 @@ func MustBootUp(configs map[string]*conf.ConfigLite, opts ...Option) error {
 			}
 		}
 		ormMgr[name] = db
-
 	}
 	go func() {
 		ticker := time.NewTicker(time.Minute * 10)
@@ -98,9 +91,11 @@ func MustBootUp(configs map[string]*conf.ConfigLite, opts ...Option) error {
 				for _, v := range ormMgr {
 					if d, err := v.DB(); err != nil {
 						log.Error(zap.Error(err))
+						return
 					} else {
 						if err = d.Ping(); err != nil {
 							log.Error(zap.Error(err))
+							return
 						}
 					}
 					log.Infox(fmt.Sprintf("%s  %s", "[GORM]", "PING DATABASE mysql"))
@@ -111,34 +106,40 @@ func MustBootUp(configs map[string]*conf.ConfigLite, opts ...Option) error {
 	return nil
 }
 
-// ConvertLevel todo abandoned
-func ConvertLevel(level string) logger.LogLevel {
-	switch level {
-	case "silent":
-		return logger.Silent
-	case "err":
-		return logger.Error
-	case "warn":
-		return logger.Warn
-	case "info":
-		return logger.Info
-	}
-
-	return logger.Silent
-}
-
+// NewSession 单数据库
 func NewSession(name string) (*gorm.DB, error) {
 	if g, e := get(name); e == nil {
-		return g.Session(&gorm.Session{Logger: newLogger}) /*g.WithContext(context.Background())*/, nil
+		return g.Session(&gorm.Session{}), nil
 	} else {
 		return nil, e
 	}
 }
 
-func Close(tx *sql.DB) {
-	if err := tx.Close(); err != nil {
-		log.Error(zap.Error(err))
-		return
+// Read 从数据库 只读
+func Read(name string) (*gorm.DB, error) {
+	if g, e := get(name); e == nil {
+		return g.Clauses(dbresolver.Read).Session(&gorm.Session{}), nil
+	} else {
+		return nil, e
+	}
+}
+
+// Write 主数据库 只写
+func Write(name string) (*gorm.DB, error) {
+	if g, e := get(name); e == nil {
+		return g.Clauses(dbresolver.Write).Session(&gorm.Session{}), nil
+	} else {
+		return nil, e
+	}
+}
+
+// Close 释放连接至连接池
+func Close(tx *gorm.DB) {
+	if g, e := tx.DB(); e == nil {
+		if err := g.Close(); err != nil {
+			log.Error(zap.Error(err))
+			return
+		}
 	}
 	return
 }

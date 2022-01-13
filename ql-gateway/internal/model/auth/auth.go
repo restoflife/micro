@@ -27,7 +27,7 @@ type Model struct {
 }
 
 func NewAuthModel(session *xorm.Session) *Model {
-	return &Model{session}
+	return &Model{session: session}
 }
 
 func (m *Model) RegisterModel(r *protocol.RegisterReq) error {

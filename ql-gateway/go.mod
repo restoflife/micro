@@ -23,7 +23,7 @@ require (
 	github.com/goccy/go-json v0.8.1 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang/snappy v0.0.4 // indirect
-	github.com/google/uuid v1.1.2
+	github.com/google/uuid v1.1.5
 	github.com/jinzhu/now v1.1.4 // indirect
 	github.com/mitchellh/mapstructure v1.4.3
 	github.com/mojocn/base64Captcha v1.3.5
@@ -40,6 +40,7 @@ require (
 	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
 	gorm.io/driver/mysql v1.2.3
 	gorm.io/gorm v1.22.4
+	gorm.io/plugin/dbresolver v1.1.0
 	xorm.io/builder v0.3.9
 	xorm.io/xorm v1.2.5
 )

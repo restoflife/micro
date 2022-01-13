@@ -18,7 +18,6 @@ import (
 	"go.uber.org/zap"
 	"time"
 	"xorm.io/xorm"
-	xlog "xorm.io/xorm/log"
 )
 
 var dbMgr = map[string]*xorm.EngineGroup{}
@@ -48,12 +47,12 @@ func MustBootUp(configs map[string]*conf.ConfigLite, opts ...Option) error {
 		if err != nil {
 			return err
 		}
-		db.Logger().SetLevel(xlog.LOG_ERR)
+		//db.Logger().SetLevel(xlog.LOG_ERR)
 		db.SetLogger(ormLog.NewXormLogger(sqlLog))
 		db.ShowSQL(config.ShowSql)
-		if config.ShowSql {
-			db.Logger().SetLevel(xlog.LOG_INFO)
-		}
+		//if config.ShowSql {
+		//	db.Logger().SetLevel(xlog.LOG_INFO)
+		//}
 		if config.MaxIdle > 0 {
 			db.SetMaxIdleConns(config.MaxIdle)
 		}
@@ -81,6 +80,7 @@ func MustBootUp(configs map[string]*conf.ConfigLite, opts ...Option) error {
 				for _, v := range dbMgr {
 					if err := v.Ping(); err != nil {
 						l.Error(zap.Error(err))
+						return
 					}
 				}
 			}
