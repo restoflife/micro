@@ -96,6 +96,36 @@ pool_size = 10
 #最小空闲连接配额
 idle_conns = 10
 
+#mongodb 配置 库名
+[mongo.test]
+#地址
+addr = "mongodb://root:mongodb@127.0.0.1:27017/?authSource=admin"
+#超时时间
+max_idle_time = 10
+#连接池最大数量
+max_pool = 180
+#连接池最小数量
+min_pool = 10
+#用户名
+username = "root"
+#密码
+password = "mongodb"
+
+#mongodb 配置 库名
+[mongo.deng]
+#地址
+addr ="mongodb://root:mongodb@127.0.0.1:27017/?authSource=admin"
+#超时时间
+max_idle_time = 10
+#连接池最大数量
+max_pool = 180
+#连接池最小数量
+min_pool = 10
+#用户名
+username = "root"
+#密码
+password = "mongodb"
+
 #登陆相关配置
 [login]
 total = 5

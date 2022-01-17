@@ -34,6 +34,7 @@ require (
 	github.com/sony/sonyflake v1.0.0
 	github.com/tidwall/gjson v1.12.1
 	go.etcd.io/etcd/client/v3 v3.5.1 // indirect
+	go.mongodb.org/mongo-driver v1.8.2
 	golang.org/x/crypto v0.0.0-20210915214749-c084706c2272
 	golang.org/x/net v0.0.0-20211216030914-fe4d6282115f // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c

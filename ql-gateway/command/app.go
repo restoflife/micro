@@ -22,6 +22,7 @@ import (
 	"github.com/restoflife/micro/gateway/internal/component/elasticsearch"
 	"github.com/restoflife/micro/gateway/internal/component/grpccli"
 	"github.com/restoflife/micro/gateway/internal/component/log"
+	"github.com/restoflife/micro/gateway/internal/component/mongo"
 	"github.com/restoflife/micro/gateway/internal/component/orm"
 	"github.com/restoflife/micro/gateway/internal/component/redis"
 	"github.com/restoflife/micro/gateway/internal/model"
@@ -74,6 +75,11 @@ func (m *mainApp) BootUpPrepare() {
 
 	log.Infox("elasticsearch client initialized...")
 	if err := elasticsearch.NewElasticSearchClient(conf.C.Elastic); err != nil {
+		log.Panic(zap.Error(err))
+	}
+
+	log.Infox("mongodb client initialized...")
+	if err := mongo.MustBootUp(conf.C.Mongo); err != nil {
 		log.Panic(zap.Error(err))
 	}
 

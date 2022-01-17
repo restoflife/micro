@@ -105,9 +105,19 @@ func Write(name string) (*xorm.Engine, error) {
 	}
 }
 
+// NewSession 需要手动释放连接
 func NewSession(name string) (*xorm.Session, error) {
 	if g, e := get(name); e == nil {
 		return g.NewSession(), nil
+	} else {
+		return nil, e
+	}
+}
+
+// NewEngine 不需要手动释放连接
+func NewEngine(name string) (*xorm.Engine, error) {
+	if g, e := get(name); e == nil {
+		return g.Engine, nil
 	} else {
 		return nil, e
 	}

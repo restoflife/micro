@@ -13,15 +13,16 @@ var C *Config
 
 type (
 	Config struct {
-		ServerCfg    *ServerConfig          `toml:"server"`
-		RunLogCfg    *LogConfig             `toml:"runLog"`
-		AccessLogCfg *LogConfig             `toml:"accessLog"`
-		SQLLogCfg    *LogConfig             `toml:"sqlLog"`
-		DB           map[string]*ConfigLite `toml:"db"`
-		Redis        *RedisConfig           `toml:"redis"`
-		Login        *login                 `toml:"login"`
-		GRpcCli      map[string]grpcCli     `toml:"grpc_cli"`
-		Elastic      *ElasticConfig         `toml:"elastic"`
+		ServerCfg    *ServerConfig           `toml:"server"`
+		RunLogCfg    *LogConfig              `toml:"runLog"`
+		AccessLogCfg *LogConfig              `toml:"accessLog"`
+		SQLLogCfg    *LogConfig              `toml:"sqlLog"`
+		DB           map[string]*ConfigLite  `toml:"db"`
+		Redis        *RedisConfig            `toml:"redis"`
+		Mongo        map[string]*MongoConfig `toml:"mongo"`
+		Login        *login                  `toml:"login"`
+		GRpcCli      map[string]grpcCli      `toml:"grpc_cli"`
+		Elastic      *ElasticConfig          `toml:"elastic"`
 	}
 )
 
@@ -42,6 +43,14 @@ type (
 		Time    int    `toml:"time"`
 		Key     string `toml:"key"`
 		Timeout int64  `toml:"timeout"`
+	}
+	MongoConfig struct {
+		Addr        string `toml:"addr"`
+		MaxIdleTime int    `toml:"max_idle_time"`
+		MaxPool     uint64 `toml:"max_pool"`
+		MinPool     uint64 `toml:"min_pool"`
+		Username    string `toml:"username"`
+		Password    string `toml:"password"`
 	}
 	ConfigLite struct {
 		Driver  string `toml:"driver"`
