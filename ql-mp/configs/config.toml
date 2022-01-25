@@ -6,14 +6,19 @@ mode = true
 #rpc 地址
 rpc_addr = "0.0.0.0:1200"
 #注册服务发现 etcd地址
-etcd = "http://127.0.0.1:2379"
-etcd_cert = ""#./config/etcd.pem
-etcd_key = "" #./config/etcd-key.pem
-etcd_ca_cert = "" #./config/etcd-ca.pem
+etcd = "http://127.0.0.1:2377"
+#./config/etcd.pem
+etcd_cert = ""
+#./config/etcd-key.pem
+etcd_key = ""
+#./config/etcd-ca.pem
+etcd_ca_cert = ""
 #注册服务发现 prefix服务目录
 prefix = "/services/mp/"
+
+[grpc_cli.order]
 #订单服务发现
-order_prefix = "/services/order/"
+prefix = "/services/order/"
 
 #系统云行日志配置
 [runLog]
@@ -58,7 +63,7 @@ dsn = "root:mysql@tcp(127.0.0.1:33066)/mp?charset=utf8mb4&parseTime=True&loc=Loc
 [redis]
 network = "tcp"
 # len >1 为集群模式否则为单机模式
-addr = ["127.0.0.1:6378"]
+addr = ["127.0.0.1:6379"]
 #redis数据库编号0-15取值
 db = 5
 #密码
@@ -78,4 +83,4 @@ timeout = 36000
 #微信
 [wechat]
 appid = "wx5f9a1e460bce066d"
-secret = "b558937a10dca430220945bb3ae1aed0"
+secret = "b558937a10dca430220945bb3ae0"

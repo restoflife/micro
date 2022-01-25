@@ -1,35 +1,35 @@
 /*
  * @Author: Administrator
  * @IDE: GoLand
- * @Date: 2021/12/6 13:55
+ * @Date: 2022-01-07 10:49
  * @LastEditors: Administrator
- * @LastEditTime: 2021/12/6 13:55
- * @FilePath: internal/component/orm/option.go
+ * @LastEditTime: 2022-01-07 10:49
+ * @FilePath: ql-gateway/internal/component/orm/option.go
  */
 
-package db
+package orm
 
 import (
-	"xorm.io/xorm"
+	"gorm.io/gorm"
 )
 
-type SyncXormFunc func(string, *xorm.EngineGroup) error
+type SyncGormFunc func(string, *gorm.DB) error
 
 type Options struct {
-	syncXorm SyncXormFunc
+	syncGorm SyncGormFunc
 }
 
 type Option func(*Options)
 
-func SetSyncXormFunc(f SyncXormFunc) Option {
+func SetSyncGormFunc(f SyncGormFunc) Option {
 	return func(o *Options) {
-		o.syncXorm = f
+		o.syncGorm = f
 	}
 }
 
 func newOptions(opts ...Option) Options {
 	opt := Options{
-		syncXorm: nil,
+		syncGorm: nil,
 	}
 
 	for _, o := range opts {

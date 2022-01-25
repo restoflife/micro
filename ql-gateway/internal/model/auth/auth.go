@@ -27,7 +27,7 @@ type Model struct {
 }
 
 func NewAuthModel(session *xorm.Session) *Model {
-	return &Model{session}
+	return &Model{session: session}
 }
 
 func (m *Model) RegisterModel(r *protocol.RegisterReq) error {
@@ -55,6 +55,7 @@ func (m *Model) RegisterModel(r *protocol.RegisterReq) error {
 	if err != nil {
 		return err
 	}
+	//m.session.Where(builder.Between{Col: "id", LessVal: 1, MoreVal: 10}).Sum(&model.Account{}, "id")
 	return nil
 }
 

@@ -187,7 +187,7 @@ func UnaryServerInterceptor(ctx context.Context, req interface{}, info *grpc.Una
 	}()
 	pr, ok := peer.FromContext(ctx)
 	if !ok {
-		return nil, status.Errorf(codes.Unauthenticated, "[getClinetIP] invoke FromContext() failed")
+		return nil, status.Errorf(codes.Unauthenticated, "[getClientIP] invoke FromContext() failed")
 	}
 	if pr.Addr == net.Addr(nil) {
 		return nil, status.Errorf(codes.Unauthenticated, "[getClientIP] peer.Addr is nil")
@@ -197,7 +197,6 @@ func UnaryServerInterceptor(ctx context.Context, req interface{}, info *grpc.Una
 		addSlice = append(addSlice, "未知ip来源")
 	}
 
-	log.Info(zap.Any("pr", pr))
 	ctx = context.WithValue(ctx, constant.ContextOrderKey, info.FullMethod)
 	log.Infox(info.FullMethod, zap.String("ip", addSlice[0]), zap.Any("request", fmt.Sprintf("%+v", req)))
 	return handler(ctx, req)

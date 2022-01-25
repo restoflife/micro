@@ -13,21 +13,44 @@ var C *Config
 
 type (
 	Config struct {
-		ServerCfg    *ServerConfig          `toml:"server"`
-		RunLogCfg    *LogConfig             `toml:"runLog"`
-		AccessLogCfg *LogConfig             `toml:"accessLog"`
-		DB           map[string]*ConfigLite `toml:"db"`
-		Redis        *RedisConfig           `toml:"redis"`
-		Login        *login                 `toml:"login"`
+		ServerCfg    *ServerConfig           `toml:"server"`
+		RunLogCfg    *LogConfig              `toml:"runLog"`
+		AccessLogCfg *LogConfig              `toml:"accessLog"`
+		SQLLogCfg    *LogConfig              `toml:"sqlLog"`
+		DB           map[string]*ConfigLite  `toml:"db"`
+		Redis        *RedisConfig            `toml:"redis"`
+		Mongo        map[string]*MongoConfig `toml:"mongo"`
+		Login        *login                  `toml:"login"`
+		GRpcCli      map[string]grpcCli      `toml:"grpc_cli"`
+		Elastic      *ElasticConfig          `toml:"elastic"`
 	}
 )
 
 type (
+	ElasticConfig struct {
+		Host     string `json:"host"`
+		Username string `json:"username"`
+		Password string `json:"password"`
+		Sniff    bool   `json:"sniff"`
+		Heal     int    `json:"heal"`
+		Gzip     bool   `json:"gzip"`
+	}
+	grpcCli struct {
+		Prefix string `toml:"prefix"`
+	}
 	login struct {
 		Total   int    `toml:"total"`
 		Time    int    `toml:"time"`
 		Key     string `toml:"key"`
 		Timeout int64  `toml:"timeout"`
+	}
+	MongoConfig struct {
+		Addr        string `toml:"addr"`
+		MaxIdleTime int    `toml:"max_idle_time"`
+		MaxPool     uint64 `toml:"max_pool"`
+		MinPool     uint64 `toml:"min_pool"`
+		Username    string `toml:"username"`
+		Password    string `toml:"password"`
 	}
 	ConfigLite struct {
 		Driver  string `toml:"driver"`
@@ -38,6 +61,9 @@ type (
 		Slave   []struct {
 			Dsn string `toml:"dsn"`
 		}
+		Prefix   string `toml:"prefix"`
+		Singular bool   `toml:"singular"`
+		MaxLife  int    `toml:"max_life"`
 	}
 	RedisConfig struct {
 		Addr       []string `toml:"addr"`
@@ -57,16 +83,11 @@ type (
 	}
 
 	ServerConfig struct {
-		Addr        string `toml:"addr"`
-		Mode        bool   `toml:"mode"`
-		RPCAddr     string `toml:"rpc_addr"`
-		Etcd        string `toml:"etcd"`
-		EtcdCert    string `toml:"etcd_cert"`
-		EtcdKey     string `toml:"etcd_key"`
-		EtcdCaCert  string `toml:"etcd_ca_cert"`
-		Prefix      string `toml:"prefix"`
-		OrderPrefix string `toml:"order_prefix"`
-		MpPrefix    string `toml:"mp_prefix"`
-		LogPrefix   string `toml:"log_prefix"`
+		Addr       string `toml:"addr"`
+		Mode       bool   `toml:"mode"`
+		Etcd       string `toml:"etcd"`
+		EtcdCert   string `toml:"etcd_cert"`
+		EtcdKey    string `toml:"etcd_key"`
+		EtcdCaCert string `toml:"etcd_ca_cert"`
 	}
 )

@@ -160,4 +160,6 @@ _xmsgs/
 ./ql-gateway/log/
 
 /ql-gateway/log/
-/ql-docker/mysql/data/
+/ql-docker/elasticsearch/data/*
+/ql-docker/golang/
+/ql-gateway/configs/config.d.toml

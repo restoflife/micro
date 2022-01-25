@@ -20,10 +20,14 @@ type (
 		Redis        *RedisConfig           `toml:"redis"`
 		Wechat       wechat                 `toml:"wechat"`
 		Jwt          *jwt                   `toml:"jwt"`
+		GRpcCli      map[string]grpcCli     `toml:"grpc_cli"`
 	}
 )
 
 type (
+	grpcCli struct {
+		Prefix string `toml:"prefix"`
+	}
 	jwt struct {
 		Key     string `toml:"key"`
 		TimeOut int    `toml:"timeout"`
@@ -60,15 +64,13 @@ type (
 	}
 
 	ServerConfig struct {
-		Addr        string `toml:"addr"`
-		Mode        bool   `toml:"mode"`
-		RPCAddr     string `toml:"rpc_addr"`
-		Etcd        string `toml:"etcd"`
-		EtcdCert    string `toml:"etcd_cert"`
-		EtcdKey     string `toml:"etcd_key"`
-		EtcdCaCert  string `toml:"etcd_ca_cert"`
-		Prefix      string `toml:"prefix"`
-		OrderPrefix string `toml:"order_prefix"`
-		LogPrefix   string `toml:"log_prefix"`
+		Addr       string `toml:"addr"`
+		Mode       bool   `toml:"mode"`
+		RPCAddr    string `toml:"rpc_addr"`
+		Etcd       string `toml:"etcd"`
+		EtcdCert   string `toml:"etcd_cert"`
+		EtcdKey    string `toml:"etcd_key"`
+		EtcdCaCert string `toml:"etcd_ca_cert"`
+		Prefix     string `toml:"prefix"`
 	}
 )

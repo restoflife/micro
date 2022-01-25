@@ -11,9 +11,10 @@ package user
 
 import (
 	"context"
-	"github.com/restoflife/micro/gateway/internal/component/grpccli/user"
+	"github.com/restoflife/micro/gateway/internal/component/grpccli"
+	"github.com/restoflife/micro/gateway/internal/constant"
 	"github.com/restoflife/micro/gateway/internal/protocol"
-	user_pb "github.com/restoflife/micro/protos/mp"
+	userPb "github.com/restoflife/micro/protos/mp"
 )
 
 type API interface {
@@ -27,7 +28,7 @@ func NewUserSvc() API {
 }
 
 func (I *IUserAPI) mpUserList(ctx context.Context, r *protocol.GetMpUserListReq) (*protocol.CommonListResp, error) {
-	resp, err := user.ExecHandler(user.GetUserList, &user_pb.GetUserListReq{
+	resp, err := grpccli.ExecHandler(grpccli.InstancedMgr[constant.MpPrefix], getUserList, &userPb.GetUserListReq{
 		Page:     r.Page,
 		PageSize: r.PageSize,
 		Uid:      uint64(r.Uid),
@@ -36,7 +37,7 @@ func (I *IUserAPI) mpUserList(ctx context.Context, r *protocol.GetMpUserListReq)
 	if err != nil {
 		return nil, err
 	}
-	result := resp.(*user_pb.GetUserListResp)
+	result := resp.(*userPb.GetUserListResp)
 
 	return &protocol.CommonListResp{Total: result.Total, List: result.List}, nil
 }

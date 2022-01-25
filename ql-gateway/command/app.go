@@ -16,30 +16,22 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
-	kitLog "github.com/go-kit/kit/log"
-	"github.com/go-kit/kit/sd/etcdv3"
-	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/restoflife/micro/gateway/conf"
 	"github.com/restoflife/micro/gateway/internal/app"
 	"github.com/restoflife/micro/gateway/internal/component/db"
+	"github.com/restoflife/micro/gateway/internal/component/elasticsearch"
 	"github.com/restoflife/micro/gateway/internal/component/grpccli"
 	"github.com/restoflife/micro/gateway/internal/component/log"
+	"github.com/restoflife/micro/gateway/internal/component/mongo"
+	"github.com/restoflife/micro/gateway/internal/component/orm"
 	"github.com/restoflife/micro/gateway/internal/component/redis"
 	"github.com/restoflife/micro/gateway/internal/model"
 	"github.com/restoflife/micro/gateway/router"
-	"github.com/restoflife/micro/gateway/utils"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/keepalive"
-	"google.golang.org/grpc/reflection"
-	"google.golang.org/grpc/status"
-	"net"
 	"net/http"
 	"os"
 	"os/signal"
-	"runtime/debug"
 	"syscall"
 	"time"
 )
@@ -70,10 +62,6 @@ func (m *mainApp) InitConfig() {
 }
 
 func (m *mainApp) BootUpPrepare() {
-	log.Infox("initialize xorm connection to database....")
-	if err := db.MustBootUp(conf.C.DB, db.SetSync2Func(model.Sync)); err != nil {
-		log.Panic(zap.Error(err))
-	}
 
 	log.Infox("initialize connection to redis...")
 	if err := redis.MustBootUp(conf.C.Redis); err != nil {
@@ -81,13 +69,35 @@ func (m *mainApp) BootUpPrepare() {
 	}
 
 	log.Infox("grpc client initialized...")
-	if err := grpccli.MustSetup(); err != nil {
-		log.Error(zap.Error(err))
+	if err := grpccli.MustBootUp(); err != nil {
+		log.Panic(zap.Error(err))
 	}
+
+	log.Infox("elasticsearch client initialized...")
+	if err := elasticsearch.NewElasticSearchClient(conf.C.Elastic); err != nil {
+		log.Panic(zap.Error(err))
+	}
+
+	log.Infox("mongodb client initialized...")
+	if err := mongo.MustBootUp(conf.C.Mongo); err != nil {
+		log.Panic(zap.Error(err))
+	}
+
+	log.Infox("initialize xorm connection to database....")
+	//TODO ::db.SetSyncXormFunc(model.SyncXorm) 生产环境不建议开启
+	if err := db.MustBootUp(conf.C.DB, db.SetSyncXormFunc(model.SyncXorm)); err != nil {
+		log.Panic(zap.Error(err))
+	}
+
+	log.Infox("initialize gorm connection to database....")
+	//TODO ::orm.SetSyncGormFunc(model.SyncGorm) 生产环境不建议开启
+	if err := orm.MustBootUp(conf.C.DB, orm.SetSyncGormFunc(model.SyncGorm)); err != nil {
+		log.Panic(zap.Error(err))
+	}
+
 }
 func (m *mainApp) BootUpServer() {
 	go httpServer()
-	//go gRPC()
 }
 
 func (m *mainApp) Run() {
@@ -100,6 +110,7 @@ func (m *mainApp) Run() {
 			defer cancel()
 			if err := srv.Shutdown(ctx); err != nil {
 				log.Error(zap.Any("Server Shutdown:", zap.Error(err)))
+				return err
 			}
 			return fmt.Errorf("received signal %s", sig)
 		}
@@ -147,90 +158,4 @@ func httpServer() {
 	if err = srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		log.Panic(zap.Error(err))
 	}
-}
-
-func gRPC() {
-	//ETCD connection parameters
-	option := etcdv3.ClientOptions{
-		DialTimeout:   time.Second * 3,
-		DialKeepAlive: time.Second * 3,
-		Cert:          conf.C.ServerCfg.EtcdCert,
-		Key:           conf.C.ServerCfg.EtcdKey,
-		CACert:        conf.C.ServerCfg.EtcdCaCert,
-	}
-	addr, err := utils.GetUrls(conf.C.ServerCfg.Etcd)
-	if err != nil {
-		log.Panic(zap.Error(err))
-	}
-
-	//Create a connection
-	client, err := etcdv3.NewClient(context.Background(), addr, option)
-	if err != nil {
-		log.Panic(zap.Error(err))
-	}
-	//Create a registration
-	registrar := etcdv3.NewRegistrar(client, etcdv3.Service{
-		Key:   conf.C.ServerCfg.Prefix,
-		Value: conf.C.ServerCfg.RPCAddr,
-	}, kitLog.NewNopLogger())
-
-	//Start registration service
-	registrar.Register()
-
-	lis, err := net.Listen("tcp", conf.C.ServerCfg.RPCAddr)
-	if err != nil {
-		log.Panic(zap.Error(err))
-	}
-	opts := []grpc.ServerOption{
-		grpcMiddleware.WithUnaryServerChain(
-			UnaryServerInterceptor,
-		),
-		grpc.KeepaliveParams(
-			keepalive.ServerParameters{
-				Time: time.Second * 10,
-			})}
-
-	log.Infox("listening",
-		zap.String("transport", "GRPC"),
-		zap.String("address", conf.C.ServerCfg.RPCAddr),
-		zap.String("prefix", conf.C.ServerCfg.Prefix),
-	)
-
-	gRpcServer := grpc.NewServer(opts...)
-
-	RegisterAllHandlers(gRpcServer)
-
-	//reflection
-	reflection.Register(gRpcServer)
-
-	if err = gRpcServer.Serve(lis); err != nil {
-		log.Panic(zap.Error(err))
-	}
-
-	f := func() error {
-		c := make(chan os.Signal, 1)
-		signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
-		select {
-		case sig := <-c:
-			registrar.Deregister()
-			return fmt.Errorf("received signal %s", sig)
-		}
-	}
-	log.Info(zap.Error(f()))
-}
-
-func RegisterAllHandlers(s *grpc.Server) {}
-
-// UnaryServerInterceptor Interceptor log printing
-func UnaryServerInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
-	defer func() {
-		if e := recover(); e != nil {
-			debug.PrintStack()
-			err = status.Errorf(codes.Internal, "Panic err: %v", e)
-			log.Error(zap.Error(err))
-		}
-	}()
-	log.Infox(info.FullMethod, zap.Any("request", fmt.Sprintf("%+v", req)))
-
-	return handler(ctx, req)
 }

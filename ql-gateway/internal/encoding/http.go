@@ -49,7 +49,6 @@ func Error(c *gin.Context, err error) {
 		Code = http.StatusUnauthorized
 	}
 	log.Err(zap.String("[GIN-PATH]", c.Request.URL.Path), zap.Error(err))
-
 	c.AbortWithStatusJSON(Code, e)
 }
 
