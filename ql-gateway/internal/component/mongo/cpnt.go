@@ -17,7 +17,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
-	"go.uber.org/zap"
 	"time"
 )
 
@@ -49,11 +48,9 @@ func MustBootUp(configs map[string]*conf.MongoConfig) error {
 		}
 		client, err := mongo.Connect(ctx, opts)
 		if err != nil {
-			log.Error(zap.Error(err))
 			return err
 		}
 		if err = client.Ping(ctx, readpref.Primary()); err != nil {
-			log.Error(zap.String("database", name), zap.Error(err))
 			return err
 		}
 		log.Infox(fmt.Sprintf("mongodb database：%s", name))

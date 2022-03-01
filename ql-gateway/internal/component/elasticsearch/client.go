@@ -35,14 +35,17 @@ func NewElasticSearchClient(config *conf.ElasticConfig) error {
 	}
 	con, err := elastic.NewClient(options...)
 	if err != nil {
-		log.Err(zap.Error(err))
 		return err
 	}
-	Cli = &Elastic7Endpoint{Client: con, ctx: context.Background()}
+	Cli = &Elastic7Endpoint{
+		Client: con,
+		ctx:    context.Background(),
+	}
 	result, code, err := Cli.Ping(config.Host).Do(context.Background())
 	if err != nil || code != http.StatusOK {
 		return err
 	}
+
 	log.Infox("elasticsearch returned wit", zap.Int("code", code), zap.String("version", result.Version.Number))
 	return nil
 }

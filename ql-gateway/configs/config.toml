@@ -143,7 +143,7 @@ username = "elastic"
 password = "123456"
 #是否开启集群嗅探
 sniff = false
-#设置两次运行状况检查之间的间隔
-heal = 10
+#设置两次运行状况检查之间的间隔(s)
+heal = 120
 #启用或禁用gzip压缩
 gzip = false

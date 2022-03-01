@@ -11,16 +11,17 @@ package elasticsearch
 
 import (
 	"context"
+	"fmt"
 	"github.com/olivere/elastic/v7"
 	"github.com/restoflife/micro/gateway/internal/component/log"
 	"go.uber.org/zap"
 )
 
 func (*errLog) Printf(format string, v ...interface{}) {
-	log.Error(zap.Any(format, v))
+	log.Error(zap.Error(fmt.Errorf(format, v...)))
 }
 func (*infoLog) Printf(format string, v ...interface{}) {
-	log.Info(zap.Any(format, v))
+	log.Infox(fmt.Sprintf(format, v...))
 }
 
 type (

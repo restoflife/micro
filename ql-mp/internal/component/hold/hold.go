@@ -30,7 +30,7 @@ var (
 
 func MustStartup() error {
 	if err := holdAccessToken(conf.C.Wechat.APPID, conf.C.Wechat.SECRET); err != nil {
-		log.Error(zap.String("app_Id", conf.C.Wechat.APPID),
+		log.Info(zap.String("app_Id", conf.C.Wechat.APPID),
 			zap.Error(err))
 		return err
 	}

@@ -72,6 +72,7 @@ func MustBootUp(configs map[string]*conf.ConfigLite, opts ...Option) error {
 				for _, v := range ormMgr {
 					if err := v.Ping(); err != nil {
 						l.Error(zap.Error(err))
+						return
 					}
 				}
 			}
