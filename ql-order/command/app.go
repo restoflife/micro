@@ -92,9 +92,9 @@ func (m *mainApp) Run() {
 		signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
 		select {
 		case sig := <-c:
-			//等待grpc连接断开
+			// 等待grpc连接断开
 			gRpcServer.GracefulStop()
-			//注销etcd
+			// 注销etcd
 			registrar.Deregister()
 			return fmt.Errorf("received signal %s", sig)
 		}
@@ -103,7 +103,7 @@ func (m *mainApp) Run() {
 }
 
 func (m *mainApp) BootUpServer() {
-	//ETCD connection parameters
+	// ETCD connection parameters
 	option := etcdv3.ClientOptions{
 		DialTimeout:   time.Second * 3,
 		DialKeepAlive: time.Second * 3,
@@ -116,18 +116,18 @@ func (m *mainApp) BootUpServer() {
 		log.Panic(zap.Error(err))
 	}
 
-	//Create a connection
+	// Create a connection
 	client, err := etcdv3.NewClient(context.Background(), addr, option)
 	if err != nil {
 		log.Panic(zap.Error(err))
 	}
 
-	//Create a registration
+	// Create a registration
 	registrar = etcdv3.NewRegistrar(client, etcdv3.Service{
 		Key:   conf.C.ServerCfg.Prefix,
 		Value: conf.C.ServerCfg.RPCAddr,
 	}, kitLog.NewNopLogger())
-	//Start registration service
+	// Start registration service
 	registrar.Register()
 
 	lis, err := net.Listen("tcp", conf.C.ServerCfg.RPCAddr)
@@ -153,7 +153,7 @@ func (m *mainApp) BootUpServer() {
 
 	RegisterAllHandlers(gRpcServer)
 
-	//reflection
+	// reflection
 	reflection.Register(gRpcServer)
 
 	go func() {

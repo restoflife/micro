@@ -12,6 +12,7 @@ package db
 import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
+	ormLog "github.com/restoflife/log"
 	"github.com/restoflife/micro/order/conf"
 	l "github.com/restoflife/micro/order/internal/component/log"
 	"go.uber.org/zap"
@@ -25,6 +26,10 @@ var ormMgr = map[string]*xorm.EngineGroup{}
 // MustBootUp Start database
 func MustBootUp(configs map[string]*conf.ConfigLite, opts ...Option) error {
 	options := newOptions(opts...)
+	sqlLog, err := l.NewLogger(conf.C.SQLLogCfg)
+	if err != nil {
+		return err
+	}
 	for name, config := range configs {
 		master, err := xorm.NewEngine(config.Driver, config.Dsn)
 		if err != nil {
@@ -43,8 +48,8 @@ func MustBootUp(configs map[string]*conf.ConfigLite, opts ...Option) error {
 		if err != nil {
 			return err
 		}
+		db.SetLogger(ormLog.NewXormLogger(sqlLog))
 		db.ShowSQL(config.ShowSql)
-		db.Logger().SetLevel(log.LOG_ERR)
 		if config.ShowSql {
 			db.Logger().SetLevel(log.LOG_INFO)
 		}
@@ -97,9 +102,19 @@ func Write(name string) (*xorm.Engine, error) {
 	}
 }
 
+// NewSession 需要手动释放连接
 func NewSession(name string) (*xorm.Session, error) {
 	if g, e := get(name); e == nil {
 		return g.NewSession(), nil
+	} else {
+		return nil, e
+	}
+}
+
+// NewEngine 不需要手动释放连接
+func NewEngine(name string) (*xorm.Engine, error) {
+	if g, e := get(name); e == nil {
+		return g.Engine, nil
 	} else {
 		return nil, e
 	}

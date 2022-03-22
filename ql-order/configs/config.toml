@@ -2,7 +2,7 @@
 #rpc 地址
 rpc_addr = "0.0.0.0:1600"
 #注册服务发现 etcd地址
-etcd = "http://127.0.0.1:2377"
+etcd = "http://127.0.0.1:2379"
 #./config/etcd.pem
 etcd_cert = ""
 #./config/etcd-key.pem
@@ -36,6 +36,19 @@ maxBackups = 10
 #所有级别日志文件最大存储时间，单位：天，级别单独配置将覆盖此值
 maxAge = 30
 
+#系统sql日志配置
+[sqlLog]
+#日志文件路径
+file = "./log/sql.log"
+#所有级别日志文件最大存储大小，级别单独配置将覆盖此值
+maxSize = 100
+#所有级别日志文件备份个数，级别单独配置将覆盖此值
+maxBackups = 10
+#所有级别日志文件最大存储时间，单位：天，级别单独配置将覆盖此值
+maxAge = 30
+#日志级别
+level = "error"
+
 #数据库配置
 [db.default]
 #数据库驱动
@@ -55,7 +68,7 @@ dsn = "root:mysql@tcp(127.0.0.1:33066)/order?charset=utf8mb4&parseTime=True&loc=
 [redis]
 network = "tcp"
 # len >1 为集群模式否则为单机模式
-addr = ["127.0.0.1:6378"]
+addr = ["127.0.0.1:6379"]
 #redis数据库编号0-15取值
 db = 5
 #密码

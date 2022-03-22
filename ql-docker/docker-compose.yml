@@ -1,29 +1,29 @@
 version: '3'
 #docker stop $(docker ps -q) & docker rm $(docker ps -aq)
 services:
-  golang:
-    build:
-      context: ./go
-      dockerfile: Dockerfile
-    container_name: golang
-    hostname: golang
-    restart: always
-    networks:
-      webserver:
-        ipv4_address: 172.18.238.2
-    ports:
-      - "8010:3100"
-      - "8020:3300"
-    links:
-      - redis
-      - mysql
-      - mongodb
-    volumes:
-      - "../ql-gateway:/www/ql-gateway"
-      - "../ql-protos:/www/ql-protos"
-      - "../ql-mp:/www/ql-mp"
-      - "../ql-order:/www/ql-order"
-    tty: true
+#  golang:
+#    build:
+#      context: ./golang
+#      dockerfile: Dockerfile
+#    container_name: golang
+#    hostname: golang
+#    restart: always
+#    networks:
+#      webserver:
+#        ipv4_address: 172.18.238.2
+#    ports:
+#      - "8010:3100"
+#      - "8020:3300"
+#    links:
+#      - redis
+#      - mysql
+#      - mongodb
+#    volumes:
+#      - "../ql-gateway:/www/ql-gateway"
+#      - "../ql-protos:/www/ql-protos"
+#      - "../ql-mp:/www/ql-mp"
+#      - "../ql-order:/www/ql-order"
+#    tty: true
   redis:
     image: redis:6.0.6-alpine
     container_name: redis

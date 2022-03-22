@@ -30,16 +30,16 @@ func authGroup(root *gin.RouterGroup) {
 	if err != nil {
 		log.Panic(zap.Error(err))
 	}
-	//登陆
+	// 登陆
 	authApi.POST("/login", authMiddleware.LoginHandler)
-	//验证码
+	// 验证码
 	authApi.GET("/captcha", auth.MakeCaptchaHandler)
-	//注册
+	// 注册
 	authApi.POST("/register", auth.MakeRegisterHandler)
 }
 
 func adminGroup(root *gin.RouterGroup) {
 	adminApi := root.Group(adminPath).Use(authMiddleware.MiddlewareFunc())
-	//管理员列表
+	// 管理员列表
 	adminApi.GET("/list", auth.MakeUserListHandler)
 }

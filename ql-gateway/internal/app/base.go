@@ -44,24 +44,24 @@ func (b *Base) BootUpAfter() {}
 func (b *Base) InitLogger() {
 	log.Init()
 	defer log.Sync()
-	//logger, err := zap.NewDevelopment()
-	//if err != nil {
+	// logger, err := zap.NewDevelopment()
+	// if err != nil {
 	//	log.Fatal(zap.Error(err))
-	//}
-	//zap.ReplaceGlobals(logger)
+	// }
+	// zap.ReplaceGlobals(logger)
 }
 
 func (b *Base) Run() {
 
 	// This function just sits and waits for ctrl-C or kill.
-	//f := func() error {
+	// f := func() error {
 	//	c := make(chan os.Signal, 1)
 	//	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
 	//	select {
 	//	case sig := <-c:
 	//		return fmt.Errorf("received signal %s", sig)
 	//	}
-	//}
+	// }
 	//
-	//zap.L().Info("terminated", zap.Error(f()))
+	// zap.L().Info("terminated", zap.Error(f()))
 }

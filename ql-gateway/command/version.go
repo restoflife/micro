@@ -13,7 +13,7 @@ import "github.com/spf13/cobra"
 
 const version = "1.0.0"
 
-//The version command prints this service.
+// The version command prints this service.
 var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "operation background",

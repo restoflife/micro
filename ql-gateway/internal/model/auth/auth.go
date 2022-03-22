@@ -55,7 +55,7 @@ func (m *Model) RegisterModel(r *protocol.RegisterReq) error {
 	if err != nil {
 		return err
 	}
-	//m.session.Where(builder.Between{Col: "id", LessVal: 1, MoreVal: 10}).Sum(&model.Account{}, "id")
+	// m.session.Where(builder.Between{Col: "id", LessVal: 1, MoreVal: 10}).Sum(&model.Account{}, "id")
 	return nil
 }
 

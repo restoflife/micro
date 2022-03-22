@@ -52,10 +52,10 @@ func NewLogger(logCfg *conf.LogConfig) (*zap.Logger, error) {
 		zapcore.NewCore(
 			encoder,
 			zapcore.AddSync(&lumberjack.Logger{
-				Filename:   logCfg.Filename,   //日志文件路径
-				MaxSize:    logCfg.MaxSize,    //每个日志文件保存的大小 单位:M
-				MaxBackups: logCfg.MaxBackups, //日志文件最多保存多少个备份
-				MaxAge:     logCfg.MaxAge,     //文件最多保存多少天
+				Filename:   logCfg.Filename,   // 日志文件路径
+				MaxSize:    logCfg.MaxSize,    // 每个日志文件保存的大小 单位:M
+				MaxBackups: logCfg.MaxBackups, // 日志文件最多保存多少个备份
+				MaxAge:     logCfg.MaxAge,     // 文件最多保存多少天
 			}),
 			createLevelEnablerFunc(logCfg.Level),
 		),
@@ -68,24 +68,24 @@ func NewLogger(logCfg *conf.LogConfig) (*zap.Logger, error) {
 	return zap.New(zapcore.NewTee(cores...)), nil
 }
 
-//日志控制台配置
+// 日志控制台配置
 func createConsoleEncoder() zapcore.Encoder {
 	encoderConfig := zap.NewDevelopmentEncoderConfig()
-	//日志时间格式
+	// 日志时间格式
 	encoderConfig.EncodeTime = timeEncoder
-	//将级别序列化为全大写字符串并添加颜色
+	// 将级别序列化为全大写字符串并添加颜色
 	encoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
 	encoderConfig.EncodeDuration = zapcore.SecondsDurationEncoder
 	encoderConfig.EncodeCaller = zapcore.ShortCallerEncoder
 	return zapcore.NewConsoleEncoder(encoderConfig)
 }
 
-//日志文件配置
+// 日志文件配置
 func createFileEncoder() zapcore.Encoder {
 	encoderConfig := zap.NewProductionEncoderConfig()
-	//日志时间格式
+	// 日志时间格式
 	encoderConfig.EncodeTime = timeEncoder
-	//将级别序列化为全大写字符串
+	// 将级别序列化为全大写字符串
 	encoderConfig.EncodeLevel = zapcore.CapitalLevelEncoder
 	encoderConfig.EncodeDuration = zapcore.SecondsDurationEncoder
 	encoderConfig.EncodeCaller = zapcore.ShortCallerEncoder

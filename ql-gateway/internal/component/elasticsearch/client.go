@@ -28,9 +28,12 @@ func NewElasticSearchClient(config *conf.ElasticConfig) error {
 		elastic.SetErrorLog(new(errLog)),
 		elastic.SetURL(config.Host),
 		elastic.SetBasicAuth(config.Username, config.Password),
-		elastic.SetSniff(config.Sniff),                                           //是否开启集群嗅探
-		elastic.SetHealthcheckInterval(time.Duration(config.Heal) * time.Second), //设置两次运行状况检查之间的间隔, 默认60s
-		elastic.SetGzip(config.Gzip),                                             //启用或禁用gzip压缩
+		// 是否开启集群嗅探
+		elastic.SetSniff(config.Sniff),
+		// 设置两次运行状况检查之间的间隔, 默认60s
+		elastic.SetHealthcheckInterval(time.Duration(config.Heal) * time.Second),
+		// 启用或禁用gzip压缩
+		elastic.SetGzip(config.Gzip),
 		elastic.SetInfoLog(new(infoLog)),
 	}
 	con, err := elastic.NewClient(options...)
@@ -96,7 +99,7 @@ func (c *Elastic7Endpoint) SearchQuery(field *SearchQueryReq) (*elastic.SearchRe
 		Size(limit).
 		Query(field.Query).
 		Pretty(true).
-		//Sort(field.Sort, true).
+		// Sort(field.Sort, true).
 		Do(c.ctx)
 	if err != nil {
 		log.Error(zap.Error(err))

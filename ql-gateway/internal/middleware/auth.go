@@ -32,12 +32,12 @@ func AuthInit() (*GinJWTMiddleware, error) {
 		Key:        []byte(conf.C.Login.Key),
 		Timeout:    time.Hour,
 		MaxRefresh: time.Hour,
-		//验证用户
+		// 验证用户
 		Authenticator: Authenticator,
-		//退出登录
+		// 退出登录
 		Unauthorized: Unauthorized,
 		PayloadFunc:  PayloadFunc,
-		//验证token
+		// 验证token
 		Authorizator:    Authorization,
 		IdentityHandler: IdentityHandler,
 		TokenLookup:     "header: Authorization, query: token, cookie: jwt",
@@ -59,17 +59,17 @@ func Authenticator(c *gin.Context) (interface{}, error) {
 	}
 	defer db.Close(session)
 
-	//if !utils.VerifyCode(req.UID, req.Otp) {
+	// if !utils.VerifyCode(req.UID, req.Otp) {
 	//	return nil, errutil.ErrVerificationCode
-	//}
+	// }
 
-	//key := fmt.Sprintf("%s%s", req.Account, constant.UserLoginTotal)
-	//total, _ := redis.GetCacheByFloat(key)
-	//if int(total) >= conf.C.Login.Total {
+	// key := fmt.Sprintf("%s%s", req.Account, constant.UserLoginTotal)
+	// total, _ := redis.GetCacheByFloat(key)
+	// if int(total) >= conf.C.Login.Total {
 	//	relieveTime, _ := redis.GetRedisExpTime(key)
 	//	log.Error(zap.Error(errors.New(fmt.Sprintf("%s错误次数已达上限[%s]后解除锁定", req.Account, relieveTime))))
 	//	return nil, errors.New(fmt.Sprintf("错误次数已达上限[%s]后解除锁定", relieveTime))
-	//}
+	// }
 	req.Ip = c.ClientIP()
 	u, e := auth.NewAuthModel(session).LoginModel(req)
 	if e == nil {
@@ -77,7 +77,7 @@ func Authenticator(c *gin.Context) (interface{}, error) {
 		mp["user"] = u
 		return mp, nil
 	} else {
-		//_ = redis.SetCache(key, int(total)+1, time.Duration(conf.C.Login.Time)*time.Second)
+		// _ = redis.SetCache(key, int(total)+1, time.Duration(conf.C.Login.Time)*time.Second)
 		return nil, e
 	}
 }
@@ -91,7 +91,7 @@ func Unauthorized(c *gin.Context, code int, message string) {
 func PayloadFunc(data interface{}) MapClaims {
 	if v, ok := data.(map[string]interface{}); ok {
 		var u model.Account
-		//analysis interface to struct
+		// analysis interface to struct
 		if err := mapstructure.Decode(v["user"], &u); err != nil {
 			log.Error(zap.Any("analysis interface to struct fail", zap.Error(err)))
 			return MapClaims{}

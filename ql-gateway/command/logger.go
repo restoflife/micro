@@ -10,6 +10,7 @@
 package command
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/mattn/go-isatty"
 	"github.com/restoflife/micro/gateway/internal/constant"
@@ -93,7 +94,7 @@ func (p *LogFormatterParams) StatusCodeColor() string {
 	}
 }
 
-//MethodColor is the ANSI color for appropriately logging http method to a terminal.
+// MethodColor is the ANSI color for appropriately logging http method to a terminal.
 func (p *LogFormatterParams) MethodColor() string {
 	method := p.Method
 
@@ -193,7 +194,7 @@ func LoggerWithConfig(logger *zap.Logger, conf LoggerConfig) gin.HandlerFunc {
 			}
 
 			param.Path = path
-			if param.ErrorMessage == "" {
+			if len(param.ErrorMessage) == 0 {
 				Ip := utils.ClientIp(c.Request)
 				logger.Info("[GIN]",
 					zap.String("Path", path),
@@ -223,6 +224,7 @@ func Recovery(logger *zap.Logger) gin.HandlerFunc {
 					zap.Any("Error", err),
 					zap.String("Request", string(httpRequest)),
 					zap.String("Stack", string(debug.Stack())),
+					zap.String("Stack2", fmt.Sprintf("%+v", string(debug.Stack()))),
 				)
 				c.AbortWithStatus(http.StatusInternalServerError)
 			}

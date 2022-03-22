@@ -22,13 +22,13 @@ func ApiRouter(root *gin.Engine) {
 	root.NoRoute(func(c *gin.Context) { c.String(http.StatusNotFound, "") })
 	api := root.Group(rootPath)
 
-	//Authentic route
+	// Authentic route
 	authGroup(api)
-	//administrators route
+	// administrators route
 	adminGroup(api)
-	//Order route
+	// Order route
 	orderGroup(api)
-	//mp route
+	// mp route
 	mpApiGroup(api)
 
 }

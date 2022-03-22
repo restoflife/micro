@@ -14,7 +14,6 @@ import (
 	"fmt"
 	"github.com/BurntSushi/toml"
 	"github.com/gin-contrib/cors"
-	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	"github.com/restoflife/micro/gateway/conf"
 	"github.com/restoflife/micro/gateway/internal/app"
@@ -84,13 +83,13 @@ func (m *mainApp) BootUpPrepare() {
 	}
 
 	log.Infox("initialize xorm connection to database....")
-	//TODO ::db.SetSyncXormFunc(model.SyncXorm) 生产环境不建议开启
+	// TODO ::db.SetSyncXormFunc(model.SyncXorm) 生产环境不建议开启
 	if err := db.MustBootUp(conf.C.DB, db.SetSyncXormFunc(model.SyncXorm)); err != nil {
 		log.Panic(zap.Error(err))
 	}
 
 	log.Infox("initialize gorm connection to database....")
-	//TODO ::orm.SetSyncGormFunc(model.SyncGorm) 生产环境不建议开启
+	// TODO ::orm.SetSyncGormFunc(model.SyncGorm) 生产环境不建议开启
 	if err := orm.MustBootUp(conf.C.DB, orm.SetSyncGormFunc(model.SyncGorm)); err != nil {
 		log.Panic(zap.Error(err))
 	}
@@ -133,13 +132,13 @@ func httpServer() {
 		AllowCredentials: true,
 		AllowMethods:     []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete, http.MethodOptions},
 		AllowHeaders:     []string{"Content-Type", "Authorization"},
-		AllowWebSockets:  true, //Allow webSocket
+		AllowWebSockets:  true, // Allow webSocket
 	}))
 
 	handler.Use(Logger(logger), Recovery(log.Logger()))
-	//pprof
-	pprof.Register(handler)
-	//Load API route
+	// pprof
+	// pprof.Register(handler)
+	// Load API route
 	router.ApiRouter(handler)
 
 	log.Infox("listening",

@@ -163,3 +163,4 @@ _xmsgs/
 /ql-docker/elasticsearch/data/*
 /ql-docker/golang/
 /ql-gateway/configs/config.d.toml
+/ql-order/log/
