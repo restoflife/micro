@@ -1,4 +1,0 @@
-2021-12-17T20:27:45+08:00	PANIC	[PANIC]	{"error": "dial tcp 127.0.0.1:33066: connectex: No connection could be made because the target machine actively refused it.", "func": "E:/golang/micro/ql-order/command/app.go:69"}
-2021-12-17T20:30:19+08:00	PANIC	[PANIC]	{"error": "listen tcp 0.0.0.0:1600: bind: An attempt was made to access a socket in a way forbidden by its access permissions.", "func": "E:/golang/micro/ql-order/command/app.go:113"}
-2021-12-17T20:30:50+08:00	PANIC	[PANIC]	{"error": "listen tcp 0.0.0.0:1600: bind: An attempt was made to access a socket in a way forbidden by its access permissions.", "func": "E:/golang/micro/ql-order/command/app.go:113"}
-2021-12-17T20:32:11+08:00	PANIC	[PANIC]	{"error": "listen tcp 0.0.0.0:1600: bind: An attempt was made to access a socket in a way forbidden by its access permissions.", "func": "E:/golang/micro/ql-order/command/app.go:113"}
