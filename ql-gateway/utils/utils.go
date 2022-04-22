@@ -12,6 +12,7 @@ package utils
 import (
 	"crypto/md5"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/mojocn/base64Captcha"
@@ -54,7 +55,7 @@ func GetUrls(u string) (addrs []string, err error) {
 }
 
 // ClientIp Resolve x-real-ip and x-forwarded-for so
-//that the reverse proxy (nginx or haproxy) can work properly.
+// that the reverse proxy (nginx or haproxy) can work properly.
 func ClientIp(r *http.Request) string {
 	xForwardedFor := r.Header.Get("X-Forwarded-For")
 	ip := strings.TrimSpace(strings.Split(xForwardedFor, ",")[0])
@@ -90,7 +91,7 @@ func MD5(plain []byte) []byte {
 
 // EncryptionPassword 加密密码
 func EncryptionPassword(password string) (string, error) {
-	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost) //加密处理
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost) // 加密处理
 	if err != nil {
 		return "", err
 	}
@@ -154,4 +155,19 @@ func DeleteSlice(slice interface{}, index int) (interface{}, error) {
 	}
 
 	return reflect.AppendSlice(sliceValue.Slice(0, index), sliceValue.Slice(index+1, length)).Interface(), nil
+}
+
+func ConvertToString(v interface{}) (str string) {
+	if v == nil {
+		return
+	}
+	var (
+		bs  []byte
+		err error
+	)
+	if bs, err = json.Marshal(v); err != nil {
+		return
+	}
+	str = string(bs)
+	return
 }

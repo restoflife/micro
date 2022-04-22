@@ -10,17 +10,17 @@
 package command
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/mattn/go-isatty"
 	"github.com/restoflife/micro/gateway/internal/constant"
+	"github.com/restoflife/micro/gateway/internal/errutil"
 	"github.com/restoflife/micro/gateway/utils"
 	"go.uber.org/zap"
 	"io"
 	"net/http"
 	"net/http/httputil"
 	"os"
-	"runtime/debug"
+	"runtime"
 	"time"
 )
 
@@ -204,11 +204,13 @@ func LoggerWithConfig(logger *zap.Logger, conf LoggerConfig) gin.HandlerFunc {
 					zap.String("User-Agent", c.Request.UserAgent()),
 					zap.String("Latency", param.Latency.String()),
 				)
-			} else {
-				for _, e := range c.Errors.Errors() {
-					logger.Error(e)
-				}
 			}
+			/*
+				else {
+						for _, e := range c.Errors.Errors() {
+							logger.Error(e)
+						}
+				}*/
 		}
 	}
 }
@@ -216,17 +218,26 @@ func LoggerWithConfig(logger *zap.Logger, conf LoggerConfig) gin.HandlerFunc {
 // Recovery 使用zap替换gin内部的recovery模块
 func Recovery(logger *zap.Logger) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		var (
+			rawReq []byte
+		)
+		if c.Request != nil {
+			rawReq, _ = httputil.DumpRequest(c.Request, true)
+		}
 		defer func() {
 			if err := recover(); err != nil {
-				httpRequest, _ := httputil.DumpRequest(c.Request, false)
+				const size = 64 << 10
+				stack := make([]byte, size)
+				stack = stack[:runtime.Stack(stack, false)]
 				logger.Error("[Recovery From Panic]",
 					zap.String("Time", time.Now().Format(constant.Layout)),
 					zap.Any("Error", err),
-					zap.String("Request", string(httpRequest)),
-					zap.String("Stack", string(debug.Stack())),
-					zap.String("Stack2", fmt.Sprintf("%+v", string(debug.Stack()))),
+					zap.String("Request", string(rawReq)),
+					zap.String("RequestURI", c.Request.Host+c.Request.RequestURI),
+					// zap.String("Stack", string(debug.Stack())),
+					zap.String("Stack", string(stack)),
 				)
-				c.AbortWithStatus(http.StatusInternalServerError)
+				_ = c.AbortWithError(http.StatusInternalServerError, errutil.ErrInternalServer)
 			}
 		}()
 		c.Next()

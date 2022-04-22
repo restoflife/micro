@@ -24,6 +24,7 @@ import (
 	"github.com/restoflife/micro/gateway/internal/component/mongo"
 	"github.com/restoflife/micro/gateway/internal/component/orm"
 	"github.com/restoflife/micro/gateway/internal/component/redis"
+	"github.com/restoflife/micro/gateway/internal/middleware"
 	"github.com/restoflife/micro/gateway/internal/model"
 	"github.com/restoflife/micro/gateway/router"
 	"github.com/spf13/cobra"
@@ -134,10 +135,11 @@ func httpServer() {
 		AllowHeaders:     []string{"Content-Type", "Authorization"},
 		AllowWebSockets:  true, // Allow webSocket
 	}))
+	handler.Use(Logger(logger), Recovery(log.Logger()), middleware.CORS())
 
-	handler.Use(Logger(logger), Recovery(log.Logger()))
 	// pprof
 	// pprof.Register(handler)
+
 	// Load API route
 	router.ApiRouter(handler)
 
@@ -149,8 +151,8 @@ func httpServer() {
 	srv = &http.Server{
 		Addr:           conf.C.ServerCfg.Addr,
 		Handler:        handler,
-		ReadTimeout:    10 * time.Second,
-		WriteTimeout:   10 * time.Second,
+		ReadTimeout:    30 * time.Second,
+		WriteTimeout:   30 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
 

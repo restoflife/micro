@@ -20,11 +20,13 @@ import (
 
 var InstancedMgr = map[string]*etcdv3.Instancer{}
 
-func MustBootUp() error {
+func MustBootUp() (err error) {
 	var (
-		//注册中心地址
+		// 注册中心地址
 		etcdServer = conf.C.ServerCfg.Etcd
 		ctx        = context.Background()
+		addr       []string
+		client     etcdv3.Client
 	)
 	options := etcdv3.ClientOptions{
 		DialTimeout:   time.Second * 3,
@@ -33,24 +35,25 @@ func MustBootUp() error {
 		Key:           conf.C.ServerCfg.EtcdKey,
 		CACert:        conf.C.ServerCfg.EtcdCaCert,
 	}
-	addr, err := utils.GetUrls(etcdServer)
+
+	addr, err = utils.GetUrls(etcdServer)
 	if err != nil {
 		return err
 	}
 
-	//连接注册中心
-	client, err := etcdv3.NewClient(ctx, addr, options)
+	// 连接注册中心
+	client, err = etcdv3.NewClient(ctx, addr, options)
 	if err != nil {
 		return err
 	}
-	//创建实例管理器, 此管理器会Watch监听etc中prefix的目录变化更新缓存的服务实例数据
 
+	// 创建实例管理器, 此管理器会Watch监听etc中prefix的目录变化更新缓存的服务实例数据
 	for name, v := range conf.C.GRpcCli {
-		instanced, err := etcdv3.NewInstancer(client, v.Prefix, kitLog.NewNopLogger())
+		InstancedMgr[name], err = etcdv3.NewInstancer(client, v.Prefix, kitLog.NewNopLogger())
 		if err != nil {
 			return err
 		}
-		InstancedMgr[name] = instanced
 	}
-	return nil
+
+	return
 }

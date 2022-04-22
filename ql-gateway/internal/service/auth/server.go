@@ -19,21 +19,6 @@ import (
 	"go.uber.org/zap"
 )
 
-//func MakeLoginHandler(c *gin.Context) {
-//	req := &protocol.LoginReq{}
-//	if err := c.ShouldBindJSON(req); err != nil {
-//		encoding.Error(c, errutil.ErrIllegalParameter)
-//		return
-//	}
-//	req.Ip = c.ClientIP()
-//	resp, err := makeLoginService(req)
-//	if err != nil {
-//		encoding.Error(c, err)
-//		return
-//	}
-//	encoding.Ok(c, resp)
-//}
-
 func MakeCaptchaHandler(c *gin.Context) {
 	id, b64s, err := utils.DriverDigitFunc()
 	if err != nil {
@@ -61,7 +46,7 @@ func MakeRegisterHandler(c *gin.Context) {
 		encoding.Error(c, err)
 		return
 	}
-	encoding.Ok(c, "")
+	encoding.Ok(c, ``)
 
 }
 func MakeUserListHandler(c *gin.Context) {}
