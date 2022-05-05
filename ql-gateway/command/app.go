@@ -136,7 +136,6 @@ func httpServer() {
 		AllowWebSockets:  true, // Allow webSocket
 	}))
 	handler.Use(Logger(logger), Recovery(log.Logger()), middleware.CORS())
-
 	// pprof
 	// pprof.Register(handler)
 

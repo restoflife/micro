@@ -49,4 +49,7 @@ func MakeRegisterHandler(c *gin.Context) {
 	encoding.Ok(c, ``)
 
 }
-func MakeUserListHandler(c *gin.Context) {}
+func MakeUserListHandler(c *gin.Context) {
+	encoding.Error(c, errutil.ErrInternalServer)
+	return
+}

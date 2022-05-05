@@ -29,18 +29,18 @@ import (
 
 func ExecHandler(src sd.Instancer, factory sd.Factory, req interface{}) (interface{}, error) {
 	logger := kitLog.NewNopLogger()
-	//创建端点管理器， 此管理器根据Factory和监听的到实例创建endPoint并订阅instanced的变化动态更新Factory创建的endPoint
+	// 创建端点管理器， 此管理器根据Factory和监听的到实例创建endPoint并订阅instanced的变化动态更新Factory创建的endPoint
 	endPointer := sd.NewEndpointer(src, factory, logger)
-	//创建负载均衡器
+	// 创建负载均衡器
 	balancer := lb.NewRoundRobin(endPointer)
 	// 我们可以通过负载均衡器直接获取请求的endPoint，发起请求
 	reqEndPoint, _ := balancer.Endpoint()
 
-	//也可以通过retry定义尝试次数进行请求
-	//todo:临时只尝试一次
+	// 也可以通过retry定义尝试次数进行请求
+	// todo:临时只尝试一次
 	reqEndPoint = lb.Retry(1, 5*time.Second, balancer)
 
-	//现在我们可以通过 endPoint 发起请求了
+	// 现在我们可以通过 endPoint 发起请求了
 	var (
 		err error
 		r   interface{}
@@ -81,6 +81,6 @@ func unaryInterceptor(ctx context.Context, method string, req, reply interface{}
 			log.Error(zap.Error(err))
 		}
 	}()
-	//ctx = metadata.AppendToOutgoingContext(ctx, "k", "v")
+	// ctx = metadata.AppendToOutgoingContext(ctx, "k", "v")
 	return invoker(ctx, method, req, reply, cc, opts...)
 }
