@@ -25,7 +25,7 @@ var (
 )
 
 func authGroup(root *gin.RouterGroup) {
-	authApi := root.Group(userPath).Use()
+	authApi := root.Group(userPath).Use(middleware.AesDecrypt())
 	authMiddleware, err = middleware.AuthInit()
 	if err != nil {
 		log.Panic(zap.Error(err))

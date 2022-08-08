@@ -11,6 +11,8 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/restoflife/micro/gateway/internal/encoding"
+	"github.com/restoflife/micro/gateway/internal/errutil"
 	"net/http"
 )
 
@@ -19,7 +21,11 @@ var (
 )
 
 func ApiRouter(root *gin.Engine) {
-	root.NoRoute(func(c *gin.Context) { c.String(http.StatusNotFound, "") })
+	root.NoRoute(func(c *gin.Context) {
+		c.String(http.StatusNotFound, "")
+		encoding.Error(c, errutil.ErrPageNotFound)
+		return
+	})
 	api := root.Group(rootPath)
 
 	// Authentic route

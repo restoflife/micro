@@ -35,7 +35,7 @@ func CORS() gin.HandlerFunc {
 			// 允许客户端传递校验信息，cookie
 			c.Header("Access-Control-Allow-Credentials", "true")
 		}
-		if method == "OPTIONS" {
+		if method == http.MethodOptions {
 			c.AbortWithStatus(http.StatusNoContent)
 		}
 		c.Request.Header.Del("Origin")

@@ -23,17 +23,22 @@ type (
 		Login        *login                  `toml:"login"`
 		GRpcCli      map[string]grpcCli      `toml:"grpc_cli"`
 		Elastic      *ElasticConfig          `toml:"elastic"`
+		Encryption   *EncryptionConfig       `toml:"encryption"`
 	}
 )
 
 type (
+	EncryptionConfig struct {
+		Key string `toml:"key"`
+		Iv  string `toml:"iv"`
+	}
 	ElasticConfig struct {
-		Host     string `json:"host"`
-		Username string `json:"username"`
-		Password string `json:"password"`
-		Sniff    bool   `json:"sniff"`
-		Heal     int    `json:"heal"`
-		Gzip     bool   `json:"gzip"`
+		Host     string `toml:"host"`
+		Username string `toml:"username"`
+		Password string `toml:"password"`
+		Sniff    bool   `toml:"sniff"`
+		Heal     int    `toml:"heal"`
+		Gzip     bool   `toml:"gzip"`
 	}
 	grpcCli struct {
 		Prefix string `toml:"prefix"`

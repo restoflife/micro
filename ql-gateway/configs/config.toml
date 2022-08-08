@@ -55,7 +55,7 @@ maxBackups = 10
 #所有级别日志文件最大存储时间，单位：天，级别单独配置将覆盖此值
 maxAge = 30
 #日志级别
-level = "info"
+level = "debug"
 
 #数据库配置
 [db.default]
@@ -147,3 +147,8 @@ sniff = false
 heal = 120
 #启用或禁用gzip压缩
 gzip = false
+
+#对称加密
+[encryption]
+key = "aFs25NHp2Kt8KYw6HxNZmET0"
+iv = "t19yZlW85z59RBTF"

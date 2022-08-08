@@ -60,8 +60,11 @@ const (
 	accountExist
 )
 
+const NotFound = 404
+
 var (
 	ErrUnauthorized     = New(unauthorized, "unauthorized")
 	ErrIllegalParameter = New(illegalParameter, "illegal parameter")
 	ErrAccountExist     = New(accountExist, "account exist")
+	ErrPageNotFound     = New(NotFound, "Not Found")
 )

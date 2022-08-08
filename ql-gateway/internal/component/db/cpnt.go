@@ -71,7 +71,7 @@ func MustBootUp(configs map[string]*conf.ConfigLite, opts ...Option) error {
 		dbMgr[name] = db
 	}
 	go func() {
-		ticker := time.NewTicker(time.Minute * 10)
+		ticker := time.NewTicker(time.Hour * 5)
 		for {
 			select {
 			case <-ticker.C:

@@ -26,3 +26,7 @@ type File struct {
 	Name    string `json:"name"`
 	Content []byte `json:"content"`
 }
+
+type EncryptJson struct {
+	Param string `json:"param"`
+}
