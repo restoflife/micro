@@ -24,7 +24,7 @@ import (
 
 var ormMgr = map[string]*gorm.DB{}
 
-//MustBootUp Start database by gorm
+// MustBootUp Start database by gorm
 func MustBootUp(configs map[string]*conf.ConfigLite, opts ...Option) error {
 	sqlLog, err := log.NewLogger(conf.C.SQLLogCfg)
 	if err != nil {
@@ -85,7 +85,7 @@ func MustBootUp(configs map[string]*conf.ConfigLite, opts ...Option) error {
 		ormMgr[name] = db
 	}
 	go func() {
-		ticker := time.NewTicker(time.Minute * 10)
+		ticker := time.NewTicker(time.Hour * 5)
 		for {
 			select {
 			case <-ticker.C:
