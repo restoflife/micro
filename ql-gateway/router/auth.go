@@ -36,6 +36,8 @@ func authGroup(root *gin.RouterGroup) {
 	authApi.GET("/captcha", auth.MakeCaptchaHandler)
 	// 注册
 	authApi.POST("/register", auth.MakeRegisterHandler)
+	// 	文件上传
+	authApi.POST("/upload", auth.MakeUploadHandler)
 }
 
 func adminGroup(root *gin.RouterGroup) {

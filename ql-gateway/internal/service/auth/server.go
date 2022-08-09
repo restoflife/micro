@@ -10,6 +10,9 @@
 package auth
 
 import (
+	"bytes"
+	"encoding/hex"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/restoflife/micro/gateway/internal/component/log"
 	"github.com/restoflife/micro/gateway/internal/encoding"
@@ -17,6 +20,9 @@ import (
 	"github.com/restoflife/micro/gateway/internal/protocol"
 	"github.com/restoflife/micro/gateway/utils"
 	"go.uber.org/zap"
+	"mime/multipart"
+	"path"
+	"time"
 )
 
 func MakeCaptchaHandler(c *gin.Context) {
@@ -52,4 +58,52 @@ func MakeRegisterHandler(c *gin.Context) {
 func MakeUserListHandler(c *gin.Context) {
 	encoding.Error(c, errutil.ErrInternalServer)
 	return
+}
+
+func MakeUploadHandler(c *gin.Context) {
+	filetType := c.PostForm("type")
+	file, err := c.FormFile("upload_file")
+	if err != nil {
+		encoding.Error(c, errutil.ErrIllegalParameter)
+		return
+	}
+	f, err := file.Open()
+	if err != nil {
+		encoding.Error(c, err)
+		return
+	}
+	defer func(f multipart.File) {
+		err := f.Close()
+		if err != nil {
+			return
+		}
+	}(f)
+	switch filetType {
+	case "1":
+		// 图片
+		filetType = "image"
+	case "2":
+		// 视频
+		filetType = "video"
+	case "3":
+		// 音频
+		filetType = "audio"
+	default:
+		// 文件
+		filetType = "file"
+	}
+	var b = make([]byte, file.Size)
+	if _, err = f.Read(b); err != nil {
+		encoding.Error(c, err)
+		return
+	}
+	fileExt := path.Ext(file.Filename)
+	var key = fmt.Sprintf("%s/%s%d", filetType, utils.MD5String(file.Filename), time.Now().Unix()) + hex.EncodeToString(utils.MD5(b))
+	key += fileExt
+	result, err := utils.UploadImageByQiNiu(bytes.NewReader(b), key, file.Size)
+	if err != nil {
+		encoding.Error(c, err)
+		return
+	}
+	encoding.Ok(c, result)
 }

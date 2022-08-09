@@ -24,10 +24,24 @@ type (
 		GRpcCli      map[string]grpcCli      `toml:"grpc_cli"`
 		Elastic      *ElasticConfig          `toml:"elastic"`
 		Encryption   *EncryptionConfig       `toml:"encryption"`
+		QiNiu        qiNiu                   `toml:"qi_niu"`
+		AliOss       aliOss                  `toml:"ali_oss"`
 	}
 )
 
 type (
+	aliOss struct {
+		AccessKey string `toml:"access_key"`
+		SecretKey string `toml:"secret_key"`
+		Bucket    string `toml:"bucket"`
+		Domain    string `toml:"domain"`
+	}
+	qiNiu struct {
+		AccessKey string `toml:"access_key"`
+		SecretKey string `toml:"secret_key"`
+		Bucket    string `toml:"bucket"`
+		Domain    string `toml:"domain"`
+	}
 	EncryptionConfig struct {
 		Key string `toml:"key"`
 		Iv  string `toml:"iv"`

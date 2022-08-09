@@ -4,10 +4,12 @@ go 1.17
 
 require (
 	github.com/BurntSushi/toml v0.4.1
+	github.com/aliyun/aliyun-oss-go-sdk v2.2.4+incompatible
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.7.7
 	github.com/go-kit/kit v0.12.0
 	github.com/mattn/go-isatty v0.0.14
+	github.com/qiniu/go-sdk/v7 v7.13.0
 	github.com/spf13/cobra v1.3.0
 	github.com/spf13/viper v1.10.0
 	github.com/uber/jaeger-client-go v2.30.0+incompatible
@@ -17,6 +19,7 @@ require (
 )
 
 require (
+	github.com/baiyubin/aliyun-sts-go-sdk v0.0.0-20180326062324-cfa1a18b161f // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/coreos/go-semver v0.3.0 // indirect
 	github.com/coreos/go-systemd/v22 v22.3.2 // indirect
@@ -65,6 +68,7 @@ require (
 	go.uber.org/multierr v1.7.0 // indirect
 	golang.org/x/image v0.0.0-20190802002840-cff245a6509b // indirect
 	golang.org/x/text v0.3.7 // indirect
+	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac // indirect
 	google.golang.org/genproto v0.0.0-20211208223120-3a66f561d7aa // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/ini.v1 v1.66.2 // indirect
@@ -90,7 +94,7 @@ require (
 	github.com/tidwall/gjson v1.12.1
 	go.etcd.io/etcd/client/v3 v3.5.1 // indirect
 	go.mongodb.org/mongo-driver v1.8.2
-	golang.org/x/crypto v0.0.0-20210915214749-c084706c2272
+	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
 	golang.org/x/net v0.0.0-20211216030914-fe4d6282115f // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect

@@ -152,3 +152,12 @@ gzip = false
 [encryption]
 key = "aFs25NHp2Kt8KYw6HxNZmET0"
 iv = "t19yZlW85z59RBTF"
+
+
+
+##阿里云oss配置
+[ali_oss]
+access_key = "LTAI5tHMQcBvThYx8NBKaXN1"
+secret_key = "TPiurIDtppN6XpNIA5EnPzpog31LBX"
+bucket = "blogdeng"
+domain = "https://alioss.ltdyxdrq.com"

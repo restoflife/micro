@@ -30,3 +30,6 @@ type File struct {
 type EncryptJson struct {
 	Param string `json:"param"`
 }
+type UploadImageResp struct {
+	ImgUrl string `json:"img_url"`
+}
