@@ -153,7 +153,12 @@ gzip = false
 key = "aFs25NHp2Kt8KYw6HxNZmET0"
 iv = "t19yZlW85z59RBTF"
 
-
+##七牛云配置
+[qi_niu]
+access_key = "h1b_lFiE6FstO-zHFCPYGaPs_p8epO4nqPkQPoTO"
+secret_key = "Sszf1I9qvxiDiYn7F2GWqpvpAo0vsXmz7dB5xhFW"
+bucket = "blogdeng"
+domain = "https://cdn.ltdyxdrq.com"
 
 ##阿里云oss配置
 [ali_oss]

@@ -1,4 +1,4 @@
 server.port: 5601 #端口
 server.host: "0.0.0.0"
-elasticsearch.hosts: ["http://172.18.238.9:9200"] #elasticsearch地址
+elasticsearch.hosts: ["http://172.18.238.9:9200"]
 i18n.locale: "zh-CN" #可视化页面中文

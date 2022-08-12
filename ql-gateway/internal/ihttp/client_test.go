@@ -31,6 +31,7 @@ func TestHttpGet(t *testing.T) {
 	if err != nil {
 		return
 	}
+
 	resp := new(cResponse)
 	_ = json.Unmarshal(bs, resp)
 	fmt.Println(resp)

@@ -1,29 +1,29 @@
 version: '3'
 #docker stop $(docker ps -q) & docker rm $(docker ps -aq)
 services:
-#  golang:
-#    build:
-#      context: ./golang
-#      dockerfile: Dockerfile
-#    container_name: golang
-#    hostname: golang
-#    restart: always
-#    networks:
-#      webserver:
-#        ipv4_address: 172.18.238.2
-#    ports:
-#      - "8010:3100"
-#      - "8020:3300"
-#    links:
-#      - redis
-#      - mysql
+  golang:
+    build:
+      context: ./golang
+      dockerfile: Dockerfile
+    container_name: golang
+    hostname: golang
+    restart: always
+    networks:
+      webserver:
+        ipv4_address: 172.18.238.2
+    ports:
+      - "1800:1800"
+      - "8020:3300"
+    links:
+      - redis
+      - mysql
 #      - mongodb
-#    volumes:
-#      - "../ql-gateway:/www/ql-gateway"
-#      - "../ql-protos:/www/ql-protos"
-#      - "../ql-mp:/www/ql-mp"
-#      - "../ql-order:/www/ql-order"
-#    tty: true
+    volumes:
+      - "../ql-gateway:/www/ql-gateway"
+      - "../ql-protos:/www/ql-protos"
+      - "../ql-mp:/www/ql-mp"
+      - "../ql-order:/www/ql-order"
+    tty: true
   redis:
     image: redis:6.0.6-alpine
     container_name: redis
@@ -34,23 +34,23 @@ services:
         ipv4_address: 172.18.238.4
     ports:
       - "6379:6379"
-  mongodb:
-    build:
-      context: ./mongo
-      dockerfile: Dockerfile
-    container_name: mongodb
-    hostname: mongodb
-    restart: always
-    logging:
-      driver: none
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: mongodb
-    ports:
-      - "27017:27017"
-    networks:
-      webserver:
-        ipv4_address: 172.18.238.5
+#  mongodb:
+#    build:
+#      context: ./mongo
+#      dockerfile: Dockerfile
+#    container_name: mongodb
+#    hostname: mongodb
+#    restart: always
+#    logging:
+#      driver: none
+#    environment:
+#      MONGO_INITDB_ROOT_USERNAME: root
+#      MONGO_INITDB_ROOT_PASSWORD: mongodb
+#    ports:
+#      - "27017:27017"
+#    networks:
+#      webserver:
+#        ipv4_address: 172.18.238.5
   mysql:
     build:
       context: ./mysql
@@ -90,7 +90,7 @@ services:
     ports:
       - "2377:2379"
       - "2378:2378"
-    restart: always
+#    restart: always
     networks:
       webserver:
         ipv4_address: 172.18.238.8
@@ -100,43 +100,72 @@ services:
     hostname: zipkin
     ports:
       - "9411:9411"
-#  elasticsearch:
-#    build:
-#      context: ./elasticsearch
-#      dockerfile: Dockerfile
-#    container_name: elasticsearch
-#    networks:
-#      webserver:
-#        ipv4_address: 172.18.238.9
-#    ports:
-#      - "9400:9200"
-#      - "9500:9300"
-#    environment:
-#      - "discovery.`type`=single-node"
-#      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+  elasticsearch:
+    build:
+      context: ./elasticsearch
+      dockerfile: Dockerfile
+    container_name: elasticsearch
+    networks:
+      webserver:
+        ipv4_address: 172.18.238.9
+    ports:
+      - "9200:9200"
+    environment:
+      - node.name=node-1
+      - cluster.name=es_cluster
+      - cluster.initial_master_nodes=node-1
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    restart: always
+    volumes:
+      - "./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml"
+      - "./elasticsearch/data:/usr/share/elasticsearch/data"
+      - "./elasticsearch/plugins:/usr/share/elasticsearch/plugins"
+      - "./elasticsearch/logs:/usr/share/elasticsearch/logs"
+  kibana:
+    build:
+      context: ./kibana
+      dockerfile: Dockerfile
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    volumes:
+      - "./kibana/config:/usr/share/kibana/config"
+    environment:
+      ELASTICSEARCH_URL: http://172.18.238.9:9200
+      ELASTICSEARCH_HOSTS: '["http://172.18.238.9:9200"]'
+      LOGGING_VERBOSE: "true"
+    restart: always
+    networks:
+      webserver:
+        ipv4_address: 172.18.238.10
+    depends_on:
+      - elasticsearch
+  logstash:
+    build:
+      context: ./logstash
+      dockerfile: Dockerfile
+    container_name: logstash
+    environment:
+      - TZ=Asia/Shanghai
 #    restart: always
-#    volumes:
-#      - "./elasticsearch/data:/usr/share/elasticsearch/data"
-#      - "./elasticsearch/plugins:/usr/share/elasticsearch/plugins"
-#  kibana:
-#    build:
-#      context: ./kibana
-#      dockerfile: Dockerfile
-#    container_name: kibana
-#    ports:
-#      - "5601:5601"
-#    volumes:
-#      - "./kibana/config:/usr/share/kibana/config"
-#    environment:
-#      ELASTICSEARCH_URL: https://elasticsearch:9200
-#      ELASTICSEARCH_HOSTS: https://elasticsearch:9200
-#      LOGGING_VERBOSE: "true"
-##    restart: always
-#    networks:
-#      webserver:
-#        ipv4_address: 172.18.238.10
-#    depends_on:
-#      - elasticsearch
+    networks:
+     webserver:
+      ipv4_address: 172.18.238.11
+    ports:
+    - "5044:5044"
+    volumes:
+      - "./logstash/config:/usr/share/logstash/config"
+      - "./logstash/config/logstash.conf:/usr/share/logstash/config/logstash.conf"
+#      - "./logstash/config/logstash.conf:/usr/share/logstash/config/logstash.conf"
+#      - "./logstash/data:/usr/share/logstash/data"
+      - "../ql-gateway/log:/usr/share/logstash/run/log"
+    depends_on:
+      - elasticsearch
 networks:
   webserver:
     driver: bridge
@@ -144,7 +173,7 @@ networks:
       driver: default
       config:
         - subnet: 172.18.238.0/24
-          gateway: 172.18.238.0
+#          gateway: 172.18.238.0
 
 #          docker run -d --name es -p 9200:9200 -p 9300:9300 -e ES_JAVA_OPTS="-Xms512m -Xmx512m" -e "discovery.type=single-node" elasticsearch:7.16.2
-#docker run -d --name kibana -p 5601:5601 kibana:7.16.2
+#docker run -d --name kk -p 5601:5601 kibana:7.16.2

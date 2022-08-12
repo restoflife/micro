@@ -29,14 +29,14 @@ func MustBootUp(configs map[string]*conf.MongoConfig) error {
 	for name, config := range configs {
 		opts := options.Client()
 		opts.ApplyURI(config.Addr)
-		//opts.SetAuth(options.Credential{
+		// opts.SetAuth(options.Credential{
 		//	//AuthMechanism:           "MONGODB-CR",
 		//	//AuthMechanismProperties: nil,
 		//	AuthSource:  "admin",
 		//	Username:    config.Username,
 		//	Password:    config.Password,
 		//	PasswordSet: true,
-		//})
+		// })
 		if config.MaxIdleTime > 0 {
 			opts.SetMaxConnIdleTime(time.Duration(config.MaxIdleTime) * time.Second)
 		}

@@ -1,0 +1,15 @@
+#http.host: "0.0.0.0"
+##根据实际修改es的ip：port
+#xpack.monitoring.elasticsearch.hosts: [ "http://172.18.238.9:9200"]
+## 主管道的Logstash配置路径，如果指定目录或通配符，配置文件将按字母顺序从目录中读取
+#path.config: /usr/share/logstash/config/conf.d/*.conf
+##Logstash将其日志写到的目录
+#path.logs: /usr/share/logstash/logs
+
+config:
+  reload:
+    automatic: true
+    interval: 3s
+xpack:
+  management.enabled: false
+  monitoring.enabled: false

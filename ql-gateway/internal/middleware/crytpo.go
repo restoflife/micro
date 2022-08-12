@@ -248,7 +248,7 @@ func parseJson(c *gin.Context) error {
 func parseQuery(c *gin.Context) error {
 	param := c.Query("param")
 	if len(param) < 1 {
-		log.Error(zap.Error(errors.New("len param error")))
+		log.Debug(zap.Any("uri", c.Request.URL.Path))
 		return nil
 	}
 

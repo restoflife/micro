@@ -15,10 +15,10 @@ import (
 )
 
 func getOrderDetails(id int64) (*orderPb.GetOrderDetailsResp, error) {
-	//session, err := db.NewSession(constant.DbDefaultName)
-	//if err != nil {
+	// session, err := db.NewSession(constant.DbDefaultName)
+	// if err != nil {
 	//	return nil, err
-	//}
-	//defer db.Close(session)
+	// }
+	// defer db.Close(session)
 	return &orderPb.GetOrderDetailsResp{Id: id, OrderId: fmt.Sprintf("1%03d", id)}, nil
 }

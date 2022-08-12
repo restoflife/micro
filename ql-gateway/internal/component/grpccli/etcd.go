@@ -29,8 +29,8 @@ func MustBootUp() (err error) {
 		client     etcdv3.Client
 	)
 	options := etcdv3.ClientOptions{
-		DialTimeout:   time.Second * 3,
-		DialKeepAlive: time.Second * 3,
+		DialTimeout:   time.Second * 10,
+		DialKeepAlive: time.Second * 10,
 		Cert:          conf.C.ServerCfg.EtcdCert,
 		Key:           conf.C.ServerCfg.EtcdKey,
 		CACert:        conf.C.ServerCfg.EtcdCaCert,

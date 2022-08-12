@@ -62,28 +62,52 @@ func NewClient() *elastic.Client {
 	return Cli.Client
 }
 
+func (c *Elastic7Endpoint) existsIndex(index string) (exists bool, err error) {
+	return c.IndexExists(index).Do(c.ctx)
+
+}
+
 // Insert 写入数据
-func (c *Elastic7Endpoint) Insert(index string, value interface{}) (*elastic.IndexResponse, error) {
-	response, err := c.Index().
+func (c *Elastic7Endpoint) Insert(index string, value interface{}) (resp *elastic.IndexResponse, err error) {
+	var exists bool
+	exists, err = c.existsIndex(index)
+	if err != nil {
+		return
+	}
+	if !exists {
+		err = c.CreateIndexes(index, value)
+		if err != nil {
+			return
+		}
+	}
+	resp, err = c.Index().
 		Index(index).
 		BodyJson(value).
 		Do(c.ctx)
 	if err != nil {
 		log.Error(zap.Error(err))
-		return nil, err
+		return
 	}
-	return response, nil
+	return
 }
 
 // CreateIndexes 创建索引
-func (c *Elastic7Endpoint) CreateIndexes(index string, mapping interface{}) error {
-	_, err := c.CreateIndex(index).
+func (c *Elastic7Endpoint) CreateIndexes(index string, mapping interface{}) (err error) {
+	var exists bool
+	exists, err = c.existsIndex(index)
+	if err != nil {
+		return
+	}
+	if exists {
+		return
+	}
+	_, err = c.CreateIndex(index).
 		BodyJson(mapping).
 		Do(c.ctx)
 	if err != nil {
-		return err
+		return
 	}
-	return nil
+	return
 }
 
 // SearchQuery 查询数据

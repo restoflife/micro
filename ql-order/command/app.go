@@ -83,6 +83,7 @@ func (m *mainApp) BootUpPrepare() {
 	if err := redis.MustBootUp(conf.C.Redis); err != nil {
 		log.Panic(zap.Error(err))
 	}
+	log.Infox("configuration loading completed")
 
 }
 

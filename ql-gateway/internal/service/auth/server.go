@@ -35,6 +35,7 @@ func MakeCaptchaHandler(c *gin.Context) {
 		Id:  id,
 		Url: b64s,
 	}
+
 	encoding.Ok(c, resp)
 
 }

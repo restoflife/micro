@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package order;
-option go_package = "./;order_pb"; // 指定路径
+option go_package = "./order/;order_pb"; // 指定路径
 
 service OrderSvc {
   //订单详情

@@ -21,7 +21,6 @@ import (
 	"github.com/restoflife/micro/gateway/internal/component/elasticsearch"
 	"github.com/restoflife/micro/gateway/internal/component/grpccli"
 	"github.com/restoflife/micro/gateway/internal/component/log"
-	"github.com/restoflife/micro/gateway/internal/component/mongo"
 	"github.com/restoflife/micro/gateway/internal/component/orm"
 	"github.com/restoflife/micro/gateway/internal/component/redis"
 	"github.com/restoflife/micro/gateway/internal/middleware"
@@ -78,10 +77,10 @@ func (m *mainApp) BootUpPrepare() {
 		log.Panic(zap.Error(err))
 	}
 
-	log.Infox("mongodb client initialized...")
-	if err := mongo.MustBootUp(conf.C.Mongo); err != nil {
-		log.Panic(zap.Error(err))
-	}
+	// log.Infox("mongodb client initialized...")
+	// if err := mongo.MustBootUp(conf.C.Mongo); err != nil {
+	// 	log.Panic(zap.Error(err))
+	// }
 
 	log.Infox("initialize xorm connection to database....")
 	// TODO ::db.SetSyncXormFunc(model.SyncXorm) 生产环境不建议开启
@@ -94,6 +93,7 @@ func (m *mainApp) BootUpPrepare() {
 	if err := orm.MustBootUp(conf.C.DB, orm.SetSyncGormFunc(model.SyncGorm)); err != nil {
 		log.Panic(zap.Error(err))
 	}
+	log.Infox("configuration loading completed")
 
 }
 func (m *mainApp) BootUpServer() {
