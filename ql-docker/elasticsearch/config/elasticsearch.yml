@@ -4,3 +4,4 @@ network.host: 0.0.0.0 #0.0.0.0对外开放，如对特定ip开放则改为指定
 http.port: 9200 #端口默认为9200 可以更改
 cluster.initial_master_nodes: ["node-1"] #集群节点
 xpack.security.enabled: false
+bootstrap.system_call_filter: false

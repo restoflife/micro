@@ -115,6 +115,7 @@ services:
       - cluster.name=es_cluster
       - cluster.initial_master_nodes=node-1
       - bootstrap.memory_lock=true
+#      - discovery.type=single-node
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     ulimits:
       memlock:
@@ -160,7 +161,9 @@ services:
     - "5044:5044"
     volumes:
       - "./logstash/config:/usr/share/logstash/config"
-      - "./logstash/config/logstash.conf:/usr/share/logstash/config/logstash.conf"
+      - "./logstash/config/logstash-sql.conf:/usr/share/logstash/config/logstash-sql.conf"
+      - "./logstash/config/logstash-run.conf:/usr/share/logstash/config/logstash-run.conf"
+      - "./logstash/config/logstash-access.conf:/usr/share/logstash/config/logstash-access.conf"
 #      - "./logstash/config/logstash.conf:/usr/share/logstash/config/logstash.conf"
 #      - "./logstash/data:/usr/share/logstash/data"
       - "../ql-gateway/log:/usr/share/logstash/run/log"
