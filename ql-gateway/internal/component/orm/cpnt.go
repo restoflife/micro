@@ -73,7 +73,15 @@ func MustBootUp(configs map[string]*conf.ConfigLite, opts ...Option) error {
 		if err = db.Use(plugin); err != nil {
 			return err
 		}
-
+		if d, err := db.DB(); err != nil {
+			log.Error(zap.Error(err))
+			return err
+		} else {
+			if err = d.Ping(); err != nil {
+				log.Error(zap.Error(err))
+				return err
+			}
+		}
 		if _, ok := ormMgr[name]; ok {
 			return fmt.Errorf("database components loaded twice：[%s]", name)
 		}
@@ -85,7 +93,7 @@ func MustBootUp(configs map[string]*conf.ConfigLite, opts ...Option) error {
 		ormMgr[name] = db
 	}
 	go func() {
-		ticker := time.NewTicker(time.Hour * 5)
+		ticker := time.NewTicker(time.Hour * 8)
 		for {
 			select {
 			case <-ticker.C:

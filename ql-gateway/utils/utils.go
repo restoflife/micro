@@ -84,16 +84,16 @@ func ClientIp(r *http.Request) string {
 
 // MD5String md5 digest in string
 func MD5String(plain string) string {
-	cipher := MD5([]byte(plain))
-	return hex.EncodeToString(cipher)
+	c := MD5([]byte(plain))
+	return hex.EncodeToString(c)
 }
 
 // MD5 md5 digest
 func MD5(plain []byte) []byte {
 	md5Ctx := md5.New()
 	md5Ctx.Write(plain)
-	cipher := md5Ctx.Sum(nil)
-	return cipher
+	cipherSum := md5Ctx.Sum(nil)
+	return cipherSum
 }
 
 // EncryptionPassword 加密密码
