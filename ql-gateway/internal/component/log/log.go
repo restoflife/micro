@@ -56,6 +56,7 @@ func NewLogger(logCfg *conf.LogConfig) (*zap.Logger, error) {
 				MaxSize:    logCfg.MaxSize,    // 每个日志文件保存的大小 单位:M
 				MaxBackups: logCfg.MaxBackups, // 日志文件最多保存多少个备份
 				MaxAge:     logCfg.MaxAge,     // 文件最多保存多少天
+				LocalTime:  true,              // 是否使用本地时间，默认使用UTC时间
 			}),
 			createLevelEnablerFunc(logCfg.Level),
 		),
