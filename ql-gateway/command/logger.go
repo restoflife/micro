@@ -230,7 +230,7 @@ func Recovery(logger *zap.Logger) gin.HandlerFunc {
 				stack := make([]byte, size)
 				stack = stack[:runtime.Stack(stack, false)]
 				logger.Error("[Recovery From Panic]",
-					zap.String("Time", time.Now().Format(constant.Layout)),
+					zap.String("Time", time.Now().Format(constant.RFC3339Nano)),
 					zap.Any("Error", err),
 					zap.String("Request", string(rawReq)),
 					zap.String("RequestURI", c.Request.Host+c.Request.RequestURI),

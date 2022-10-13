@@ -74,7 +74,7 @@ func MakeUploadHandler(c *gin.Context) {
 		return
 	}
 	defer func(f multipart.File) {
-		err := f.Close()
+		err = f.Close()
 		if err != nil {
 			return
 		}

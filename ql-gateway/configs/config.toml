@@ -158,11 +158,11 @@ iv = "t19yZlW85z59RBTF"
 access_key = "h1b_lFiE6FstO-zHFCPYGaPs_p8epO4nqPkQPoTO"
 secret_key = "Sszf1I9qvxiDiYn7F2GWqpvpAo0vsXmz7dB5xhFW"
 bucket = "blogdeng"
-domain = "https://cdn.ltdyxdrq.com"
+domain = "https://ltdyxdqq.com"
 
 ##阿里云oss配置
 [ali_oss]
 access_key = "LTAI5tHMQcBvThYx8NBKaXN1"
 secret_key = "TPiurIDtppN6XpNIA5EnPzpog31LBX"
 bucket = "blogdeng"
-domain = "https://alioss.ltdyxdrq.com"
+domain = "https://alioss.ltdyxdqq.com"

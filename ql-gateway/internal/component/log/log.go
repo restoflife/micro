@@ -93,7 +93,7 @@ func createFileEncoder() zapcore.Encoder {
 	return zapcore.NewConsoleEncoder(encoderConfig)
 }
 func timeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
-	enc.AppendString(t.Format(constant.Layout))
+	enc.AppendString(t.Format(constant.RFC3339Nano))
 }
 
 func createLevelEnablerFunc(input string) zap.LevelEnablerFunc {

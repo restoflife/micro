@@ -35,14 +35,14 @@ import (
 	"time"
 )
 
-type mainApp struct {
+type MainApp struct {
 	*app.Base
 }
 
 var srv *http.Server
 
-func NewApp(name string, cmd *cobra.Command) *mainApp {
-	return &mainApp{
+func NewApp(name string, cmd *cobra.Command) *MainApp {
+	return &MainApp{
 		Base: &app.Base{
 			AppName: name,
 			Command: cmd,
@@ -50,7 +50,7 @@ func NewApp(name string, cmd *cobra.Command) *mainApp {
 	}
 }
 
-func (m *mainApp) InitConfig() {
+func (m *MainApp) InitConfig() {
 	confFile := m.Command.Flags().Lookup("c")
 	if confFile == nil {
 		panic("There is no configuration file" + m.Name())
@@ -60,7 +60,7 @@ func (m *mainApp) InitConfig() {
 	}
 }
 
-func (m *mainApp) BootUpPrepare() {
+func (m *MainApp) BootUpPrepare() {
 
 	log.Infox("initialize connection to redis...")
 	if err := redis.MustBootUp(conf.C.Redis); err != nil {
@@ -96,11 +96,11 @@ func (m *mainApp) BootUpPrepare() {
 	log.Infox("configuration loading completed")
 
 }
-func (m *mainApp) BootUpServer() {
+func (m *MainApp) BootUpServer() {
 	go httpServer()
 }
 
-func (m *mainApp) Run() {
+func (m *MainApp) Run() {
 	f := func() error {
 		c := make(chan os.Signal, 1)
 		signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
@@ -115,7 +115,7 @@ func (m *mainApp) Run() {
 			return fmt.Errorf("received signal %s", sig)
 		}
 	}
-	log.Infox("Terminated", zap.Error(f()))
+	log.Infox("terminated", zap.Error(f()))
 }
 
 func httpServer() {
