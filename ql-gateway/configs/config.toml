@@ -1,8 +1,8 @@
 [server]
 #正式服配置端口
-addr = "0.0.0.0:1800"
+addr = "0.0.0.0:1801"
 #调试模式
-mode = true
+mode = false
 #注册服务发现 etcd地址
 etcd = "http://127.0.0.1:2379"
 #./config/etcd.pem

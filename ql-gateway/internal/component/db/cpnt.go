@@ -31,22 +31,22 @@ func MustBootUp(configs map[string]*conf.ConfigLite, opts ...Option) error {
 		return err
 	}
 	for name, config := range configs {
-		master, err := xorm.NewEngine(config.Driver, config.Dsn)
-		if err != nil {
-			return err
+		master, ex := xorm.NewEngine(config.Driver, config.Dsn)
+		if ex != nil {
+			return ex
 		}
 		slaves := make([]*xorm.Engine, len(config.Slave))
 		for i, s := range config.Slave {
-			slave, err := xorm.NewEngine(config.Driver, s.Dsn)
-			if err != nil {
-				return err
+			slave, x := xorm.NewEngine(config.Driver, s.Dsn)
+			if x != nil {
+				return x
 			}
 			slaves[i] = slave
 		}
 
-		db, err := xorm.NewEngineGroup(master, slaves)
-		if err != nil {
-			return err
+		db, x := xorm.NewEngineGroup(master, slaves)
+		if x != nil {
+			return x
 		}
 
 		db.SetLogger(ormLog.NewXormLogger(sqlLog))
@@ -80,7 +80,7 @@ func MustBootUp(configs map[string]*conf.ConfigLite, opts ...Option) error {
 			select {
 			case <-ticker.C:
 				for _, v := range dbMgr {
-					if err := v.Ping(); err != nil {
+					if err = v.Ping(); err != nil {
 						l.Error(zap.Error(err))
 						return
 					}

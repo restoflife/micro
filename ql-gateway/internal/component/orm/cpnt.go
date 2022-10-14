@@ -41,7 +41,7 @@ func MustBootUp(configs map[string]*conf.ConfigLite, opts ...Option) error {
 			slaves[i] = slave
 		}
 
-		db, err := gorm.Open(master, &gorm.Config{
+		db, ex := gorm.Open(master, &gorm.Config{
 			Logger: lg,
 			NamingStrategy: schema.NamingStrategy{
 				TablePrefix:   config.Prefix,
@@ -50,8 +50,8 @@ func MustBootUp(configs map[string]*conf.ConfigLite, opts ...Option) error {
 			SkipDefaultTransaction: true,
 			QueryFields:            true,
 		})
-		if err != nil {
-			return err
+		if ex != nil {
+			return ex
 		}
 		plugin := dbresolver.Register(dbresolver.Config{
 			Sources:  []gorm.Dialector{master},
@@ -73,9 +73,9 @@ func MustBootUp(configs map[string]*conf.ConfigLite, opts ...Option) error {
 		if err = db.Use(plugin); err != nil {
 			return err
 		}
-		if d, err := db.DB(); err != nil {
-			log.Error(zap.Error(err))
-			return err
+		if d, x := db.DB(); x != nil {
+			log.Error(zap.Error(x))
+			return x
 		} else {
 			if err = d.Ping(); err != nil {
 				log.Error(zap.Error(err))
@@ -93,21 +93,21 @@ func MustBootUp(configs map[string]*conf.ConfigLite, opts ...Option) error {
 		ormMgr[name] = db
 	}
 	go func() {
-		ticker := time.NewTicker(time.Hour * 8)
+		ticker := time.NewTicker(time.Hour * 5)
 		for {
 			select {
 			case <-ticker.C:
 				for _, v := range ormMgr {
-					if d, err := v.DB(); err != nil {
-						log.Error(zap.Error(err))
-						return
-					} else {
-						if err = d.Ping(); err != nil {
-							log.Error(zap.Error(err))
+					if d, x := v.DB(); x == nil {
+						if x = d.Ping(); x != nil {
+							log.Error(zap.Error(x))
 							return
 						}
+						log.Infox(fmt.Sprintf("%s  %s", "[GORM]", "PING DATABASE mysql"))
+					} else {
+						log.Error(zap.Error(x))
+						return
 					}
-					log.Infox(fmt.Sprintf("%s  %s", "[GORM]", "PING DATABASE mysql"))
 				}
 			}
 		}

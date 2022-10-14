@@ -82,12 +82,12 @@ require (
 	github.com/goccy/go-json v0.8.1 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang/snappy v0.0.4 // indirect
-	github.com/google/uuid v1.1.5
+	github.com/google/uuid v1.3.0
 	github.com/jinzhu/now v1.1.4 // indirect
 	github.com/mitchellh/mapstructure v1.4.3
 	github.com/mojocn/base64Captcha v1.3.5
 	github.com/olivere/elastic/v7 v7.0.30
-	github.com/restoflife/log v1.9.7
+	github.com/restoflife/log v1.9.9
 	github.com/restoflife/micro/protos v1.1.0
 	github.com/satori/go.uuid v1.2.0
 	github.com/sony/sonyflake v1.0.0
@@ -101,8 +101,8 @@ require (
 	gorm.io/driver/mysql v1.2.3
 	gorm.io/gorm v1.22.4
 	gorm.io/plugin/dbresolver v1.1.0
-	xorm.io/builder v0.3.9
-	xorm.io/xorm v1.2.5
+	xorm.io/builder v0.3.11-0.20220531020008-1bd24a7dc978
+	xorm.io/xorm v1.3.2
 )
 
 replace github.com/restoflife/micro/protos => ../ql-protos
