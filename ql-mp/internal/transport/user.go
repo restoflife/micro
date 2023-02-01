@@ -22,6 +22,7 @@ import (
 
 type userSvc struct {
 	getUserList grpcTransport.Handler
+	user_pb.UnimplementedUserSvcServer
 }
 
 func NewUserServer(opts ...grpcTransport.ServerOption) user_pb.UserSvcServer {

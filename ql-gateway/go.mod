@@ -99,7 +99,7 @@ require (
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
 	gorm.io/driver/mysql v1.2.3
-	gorm.io/gorm v1.22.4
+	gorm.io/gorm v1.24.0
 	gorm.io/plugin/dbresolver v1.1.0
 	xorm.io/builder v0.3.11-0.20220531020008-1bd24a7dc978
 	xorm.io/xorm v1.3.2

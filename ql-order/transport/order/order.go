@@ -22,6 +22,7 @@ import (
 
 type orderSvc struct {
 	getOrderDetails grpcTransport.Handler
+	orderPb.UnimplementedOrderSvcServer
 }
 
 func (o *orderSvc) GetOrderDetails(ctx context.Context, req *orderPb.GetOrderDetailsReq) (*orderPb.GetOrderDetailsResp, error) {

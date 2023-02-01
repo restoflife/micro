@@ -19,11 +19,9 @@ import (
 	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/restoflife/micro/order/conf"
 	"github.com/restoflife/micro/order/internal/app"
-	"github.com/restoflife/micro/order/internal/component/db"
 	"github.com/restoflife/micro/order/internal/component/log"
 	"github.com/restoflife/micro/order/internal/component/redis"
 	"github.com/restoflife/micro/order/internal/constant"
-	"github.com/restoflife/micro/order/internal/model"
 	"github.com/restoflife/micro/order/transport/order"
 	"github.com/restoflife/micro/order/utils"
 	order_pb "github.com/restoflife/micro/protos/order"
@@ -45,7 +43,7 @@ import (
 	"time"
 )
 
-type mainApp struct {
+type MainApp struct {
 	*app.Base
 }
 
@@ -54,8 +52,8 @@ var (
 	registrar  *etcdv3.Registrar
 )
 
-func NewApp(name string, cmd *cobra.Command) *mainApp {
-	return &mainApp{
+func NewApp(name string, cmd *cobra.Command) *MainApp {
+	return &MainApp{
 		Base: &app.Base{
 			AppName: name,
 			Command: cmd,
@@ -63,7 +61,7 @@ func NewApp(name string, cmd *cobra.Command) *mainApp {
 	}
 }
 
-func (m *mainApp) InitConfig() {
+func (m *MainApp) InitConfig() {
 	confFile := m.Command.Flags().Lookup("c")
 	if confFile == nil {
 		panic("There is no configuration file" + m.Name())
@@ -73,11 +71,11 @@ func (m *mainApp) InitConfig() {
 	}
 }
 
-func (m *mainApp) BootUpPrepare() {
+func (m *MainApp) BootUpPrepare() {
 	log.Infox("initialize xorm connection to database")
-	if err := db.MustBootUp(conf.C.DB, db.SetSync2Func(model.Sync)); err != nil {
-		log.Panic(zap.Error(err))
-	}
+	// if err := db.MustBootUp(conf.C.DB, db.SetSync2Func(model.Sync)); err != nil {
+	// 	log.Panic(zap.Error(err))
+	// }
 
 	log.Infox("initialize connection to redis")
 	if err := redis.MustBootUp(conf.C.Redis); err != nil {
@@ -87,7 +85,7 @@ func (m *mainApp) BootUpPrepare() {
 
 }
 
-func (m *mainApp) Run() {
+func (m *MainApp) Run() {
 	f := func() error {
 		c := make(chan os.Signal, 1)
 		signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
@@ -103,8 +101,12 @@ func (m *mainApp) Run() {
 	log.Infox("terminated grpc server", zap.Error(f()))
 }
 
-func (m *mainApp) BootUpServer() {
+func (m *MainApp) BootUpServer() {
 	// ETCD connection parameters
+	go grpcServer()
+
+}
+func grpcServer() {
 	option := etcdv3.ClientOptions{
 		DialTimeout:   time.Second * 3,
 		DialKeepAlive: time.Second * 3,
@@ -156,13 +158,9 @@ func (m *mainApp) BootUpServer() {
 
 	// reflection
 	reflection.Register(gRpcServer)
-
-	go func() {
-		if err = gRpcServer.Serve(lis); err != nil {
-			log.Panic(zap.Error(err))
-		}
-	}()
-
+	if err = gRpcServer.Serve(lis); err != nil {
+		log.Panic(zap.Error(err))
+	}
 }
 
 func RegisterAllHandlers(s *grpc.Server) {

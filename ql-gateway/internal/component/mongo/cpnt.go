@@ -17,6 +17,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
+	"go.uber.org/zap"
 	"time"
 )
 
@@ -53,9 +54,16 @@ func MustBootUp(configs map[string]*conf.MongoConfig) error {
 		if err = client.Ping(ctx, readpref.Primary()); err != nil {
 			return err
 		}
+		// 列出所以数据库
+		// client.ListDatabaseNames()
 		log.Infox(fmt.Sprintf("mongodb database：%s", name))
 		mongoMgr[name] = client
 	}
+	defer func() {
+		for _, m := range mongoMgr {
+			log.Error(zap.Error(m.Disconnect(ctx)))
+		}
+	}()
 	return nil
 }
 

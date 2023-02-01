@@ -17,12 +17,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/restoflife/micro/gateway/conf"
 	"github.com/restoflife/micro/gateway/internal/app"
-	"github.com/restoflife/micro/gateway/internal/component/db"
+	"github.com/restoflife/micro/gateway/internal/component/grpccli"
 	"github.com/restoflife/micro/gateway/internal/component/log"
-	"github.com/restoflife/micro/gateway/internal/component/orm"
 	"github.com/restoflife/micro/gateway/internal/component/redis"
 	"github.com/restoflife/micro/gateway/internal/middleware"
-	"github.com/restoflife/micro/gateway/internal/model"
 	"github.com/restoflife/micro/gateway/router"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
@@ -66,34 +64,35 @@ func (m *MainApp) BootUpPrepare() {
 	}
 
 	log.Infox("grpc client initialized...")
-	// if err := grpccli.MustBootUp(); err != nil {
-	// 	log.Panic(zap.Error(err))
-	// }
+	if err := grpccli.MustBootUp(); err != nil {
+		log.Panic(zap.Error(err))
+	}
 
 	log.Infox("elasticsearch client initialized...")
 	// if err := elasticsearch.NewElasticSearchClient(conf.C.Elastic); err != nil {
 	// 	log.Panic(zap.Error(err))
 	// }
 
-	// log.Infox("mongodb client initialized...")
+	log.Infox("mongodb client initialized...")
 	// if err := mongo.MustBootUp(conf.C.Mongo); err != nil {
 	// 	log.Panic(zap.Error(err))
 	// }
 
-	log.Infox("initialize xorm connection to database....")
-	// TODO ::db.SetSyncXormFunc(model.SyncXorm) 生产环境不建议开启
-	if err := db.MustBootUp(conf.C.DB, db.SetSyncXormFunc(model.SyncXorm)); err != nil {
-		log.Panic(zap.Error(err))
-	}
-
-	log.Infox("initialize gorm connection to database....")
-	// TODO ::orm.SetSyncGormFunc(model.SyncGorm) 生产环境不建议开启
-	if err := orm.MustBootUp(conf.C.DB, orm.SetSyncGormFunc(model.SyncGorm)); err != nil {
-		log.Panic(zap.Error(err))
-	}
+	// log.Infox("initialize xorm connection to database....")
+	// // TODO ::db.SetSyncXormFunc(model.SyncXorm) 生产环境不建议开启
+	// if err := db.MustBootUp(conf.C.DB, db.SetSyncXormFunc(model.SyncXorm)); err != nil {
+	// 	log.Panic(zap.Error(err))
+	// }
+	//
+	// log.Infox("initialize gorm connection to database....")
+	// // TODO ::orm.SetSyncGormFunc(model.SyncGorm) 生产环境不建议开启
+	// if err := orm.MustBootUp(conf.C.DB, orm.SetSyncGormFunc(model.SyncGorm)); err != nil {
+	// 	log.Panic(zap.Error(err))
+	// }
 	log.Infox("configuration loading completed")
 
 }
+
 func (m *MainApp) BootUpServer() {
 	go httpServer()
 }
