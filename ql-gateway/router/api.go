@@ -26,6 +26,7 @@ func ApiRouter(root *gin.Engine) {
 		encoding.Error(c, errutil.ErrPageNotFound)
 		return
 	})
+
 	api := root.Group(rootPath)
 
 	// Authentic route

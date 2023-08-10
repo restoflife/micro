@@ -1,5 +1,5 @@
 syntax = "proto3";
-
+//import "google/protobuf/descriptor.proto";
 package user;
 option go_package = "./;user_pb"; // 指定路径
 

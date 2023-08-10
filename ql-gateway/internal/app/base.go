@@ -52,7 +52,6 @@ func (b *Base) InitLogger() {
 }
 
 func (b *Base) Run() {
-
 	// This function just sits and waits for ctrl-C or kill.
 	// f := func() error {
 	//	c := make(chan os.Signal, 1)

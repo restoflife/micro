@@ -17,9 +17,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/restoflife/micro/gateway/conf"
 	"github.com/restoflife/micro/gateway/internal/app"
-	"github.com/restoflife/micro/gateway/internal/component/grpccli"
 	"github.com/restoflife/micro/gateway/internal/component/log"
-	"github.com/restoflife/micro/gateway/internal/component/redis"
 	"github.com/restoflife/micro/gateway/internal/middleware"
 	"github.com/restoflife/micro/gateway/router"
 	"github.com/spf13/cobra"
@@ -59,14 +57,14 @@ func (m *MainApp) InitConfig() {
 func (m *MainApp) BootUpPrepare() {
 
 	log.Infox("initialize connection to redis...")
-	if err := redis.MustBootUp(conf.C.Redis); err != nil {
-		log.Panic(zap.Error(err))
-	}
+	// if err := redis.MustBootUp(conf.C.Redis); err != nil {
+	// 	log.Panic(zap.Error(err))
+	// }
 
 	log.Infox("grpc client initialized...")
-	if err := grpccli.MustBootUp(); err != nil {
-		log.Panic(zap.Error(err))
-	}
+	// if err := grpccli.MustBootUp(); err != nil {
+	// 	log.Panic(zap.Error(err))
+	// }
 
 	log.Infox("elasticsearch client initialized...")
 	// if err := elasticsearch.NewElasticSearchClient(conf.C.Elastic); err != nil {
@@ -94,7 +92,7 @@ func (m *MainApp) BootUpPrepare() {
 }
 
 func (m *MainApp) BootUpServer() {
-	go httpServer()
+	// go httpServer()
 }
 
 func (m *MainApp) Run() {
