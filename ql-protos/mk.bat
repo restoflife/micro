@@ -11,10 +11,23 @@ for /r "." %%a in (*.proto) do (
 
 @REM proto 引入外部proto时使用以下命令 第三方proto需要在GOPATH内 https://github.com/protocolbuffers/protobuf
 set "protobuf_files="
-for %%f in (*.proto) do (
+ for %%f in (*.proto) do (
     set "protobuf_files=!protobuf_files!%%f "
 )
 
-protoc --proto_path=%GOPATH%\src --go_out=. --go_opt=paths=source_relative --proto_path=. !protobuf_files!
+set "proto_path=%GOPATH%\src"
+set "output_path=."
+
+if not exist "%proto_path%" (
+    echo "Invalid proto path"
+    exit /b 1
+)
+
+if not exist "%output_path%" (
+    echo "Invalid output path"
+    exit /b 1
+)
+
+protoc --proto_path="%proto_path%" --go_out="%output_path%" --go_opt=paths=source_relative --proto_path=. %protobuf_files%
 
 endlocal
