@@ -162,7 +162,7 @@ domain = "https://ltdyxdqq.com"
 
 ##阿里云oss配置
 [ali_oss]
-access_key = "LTAI5tHMQcBvThYx8NBKaXN1"
-secret_key = "TPiurIDtppN6XpNIA5EnPzpog31LBX"
+access_key = ""
+secret_key = ""
 bucket = "blogdeng"
 domain = "https://alioss.ltdyxdqq.com"
